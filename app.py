@@ -50,7 +50,7 @@ def counter():
 <!doctype html>
 <html>
     <body>
-        Сколько раз вы сюда захлдили: ''' + str(count) + '''
+        Сколько раз вы сюда заходили: ''' + str(count) + '''
     </body>
 </html>
 '''
