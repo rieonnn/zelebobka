@@ -27,7 +27,7 @@ def author():
             </body>
         </html>"""
 
-@app.route("/image")
+@app.route('/image')
 def image():
     path = url_for("static", filename="oak.jpg")
     return '''
@@ -36,6 +36,21 @@ def image():
     <body>
         <h1>Дуб</h1>
         <img src="''' + path + '''">
+    </body>
+</html>
+'''
+
+count = 0
+
+@app.route('/counter')
+def counter():
+    global count
+    count += 1
+    return '''
+<!doctype html>
+<html>
+    <body>
+        Сколько раз вы сюда захлдили: ''' + str(count) + '''
     </body>
 </html>
 '''
