@@ -4,32 +4,62 @@ import datetime
 
 app = Flask(__name__)
 
+# список для хранения логов
+error_log = []
+
 @app.errorhandler(404)
 def not_found(err):
-    return '''
+    global error_log
+    time = datetime.datetime.now()
+    ip = request.remote_addr
+    url = request.url
+
+    # добавляем запись в лог
+    error_log.append(f"[{time}], пользователь {ip} зашёл на адрес: {url}")
+
+    # формируем html для журнала
+    log_html = "<h3>Журнал:</h3><ul>"
+    for entry in error_log:
+        # выделим ссылку <i>курсивом</i>
+        parts = entry.split("адрес:")
+        log_html += f"<li>{parts[0]} зашёл на адрес: <i>{parts[1].strip()}</i></li>"
+    log_html += "</ul>"
+
+    return f'''
 <!doctype html>
 <html>
     <head>
         <meta charset="utf-8">
         <title>Ошибка 404 — страница не найдена</title>
         <style>
-            body {
+            body {{
                 font-family: Arial, sans-serif;
-                text-align: center;
-                background-color: #f8f8f8;
-                padding: 50px;
-            }
-            h1 { color: #d9534f; }
-            p { font-size: 18px; }
-            img { max-width: 300px; margin-top: 20px; }
+                background-color: #fdf6f6;
+                padding: 20px 40px;
+            }}
+            h1 {{ color: #d9534f; }}
+            p {{ font-size: 16px; }}
+            a {{ color: #0275d8; text-decoration: none; }}
+            a:hover {{ text-decoration: underline; }}
+            ul {{ list-style-type: disc; }}
+            li {{ margin-bottom: 8px; }}
+            footer {{ margin-top: 30px; font-size: 14px; color: gray; }}
+            img {{ max-width: 300px; margin-top: 20px; }}
         </style>
     </head>
     <body>
         <h1>Ой! Ошибка 404</h1>
-        <p>Такой страницы нет. Возможно, вы ошиблись в адресе.</p>
-        <a href="/">Вернуться на главную</a>
-        <br>
+        <p>Запрашиваемая страница <b>{url}</b> не найдена.</p>
         <img src="https://http.cat/404" alt="404">
+        <br>
+        <p>Ваш IP: <b>{ip}</b></p>
+        <p>Дата и время: <b>{time}</b></p>
+        <a href="/">Вернуться на главную</a>
+        <hr>
+        {log_html}
+        <footer>
+            <p>Сервер: Flask | Лабораторная работа</p>
+        </footer>
     </body>
 </html>
 ''', 404
