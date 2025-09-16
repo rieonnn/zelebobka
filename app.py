@@ -1,25 +1,26 @@
 from flask import Flask, url_for, request, redirect
 import datetime
+
 app = Flask(__name__)
 
 @app.errorhandler(404)
 def not_found(err):
     return "нет такой страницы", 404
 
-@app.route("/web")
+@app.route("/lab1/web")
 def web():
     return """<!doctype html>
         <html>
            <body>
                <h1>web-сервер на flask</h1>
-               <a href="/author">author</a>
+               <a href="/lab1/author">author</a>
            </body>
         </html>""", 200, {
             'X-Server': 'sample',
             'Content-Type': 'text/plan; charset=utf-8'
             }
 
-@app.route("/author")
+@app.route("/lab1/author")
 def author():
     name = "Андреева Ирина Александровна"
     group = "ФБИ-33"
@@ -31,11 +32,11 @@ def author():
                 <p>Студент: """ + name + """</p>
                 <p>Группа: """ + group + """</p>
                 <p>Факультет: """ + faculty + """</p>
-                <a href="/web">web</a>
+                <a href="/lab1/web">web</a>
             </body>
         </html>"""
 
-@app.route('/image')
+@app.route('/lab1/image')
 def image():
     path = url_for("static", filename="oak.jpg")
     css = url_for("static", filename="lab1.css")
@@ -56,7 +57,7 @@ def image():
 
 count = 0
 
-@app.route('/counter')
+@app.route('/lab1/counter')
 def counter():
     global count
     count += 1
@@ -73,12 +74,12 @@ def counter():
         Дата и время: ''' + str(time) + '''<br>
         Запрошенный адрес: ''' + str(url) + '''<br>
         Ваш IP-адрес: ''' + str(client_ip) + '''<br>
-        <a href="/reset_counter">Сбросить счётчик</a>
+        <a href="/lab1/reset_counter">Сбросить счётчик</a>
     </body>
 </html>
 '''
 
-@app.route('/reset_counter')
+@app.route('/lab1/reset_counter')
 def reset_counter():
     global count
     count = 0
@@ -87,14 +88,14 @@ def reset_counter():
 <html>
     <body>
         <h1>Счётчик очищен!</h1>
-        <a href="/counter">Вернуться к счётчику</a>
+        <a href="/lab1/counter">Вернуться к счётчику</a>
     </body>
 </html>
 '''
 
-@app.route("/info")
+@app.route("/lab1/info")
 def info():
-    return redirect("/author")
+    return redirect("/lab1/author")
 
 @app.route("/lab1/created")
 def created():
