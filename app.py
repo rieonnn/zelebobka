@@ -7,6 +7,30 @@ app = Flask(__name__)
 def not_found(err):
     return "нет такой страницы", 404
 
+@app.route("/error/400")
+def error400():
+    return "<h1>400 — Bad Request (Некорректный запрос)</h1>", 400
+
+@app.route("/error/401")
+def error401():
+    return "<h1>401 — Unauthorized (Требуется авторизация)</h1>", 401
+
+@app.route("/error/402")
+def error402():
+    return "<h1>402 — Payment Required (Требуется оплата)</h1>", 402
+
+@app.route("/error/403")
+def error403():
+    return "<h1>403 — Forbidden (Доступ запрещён)</h1>", 403
+
+@app.route("/error/405")
+def error405():
+    return "<h1>405 — Method Not Allowed (Метод не разрешён)</h1>", 405
+
+@app.route("/error/418")
+def error418():
+    return "<h1>418 — I'm a teapot (Я чайник)</h1>", 418
+
 @app.route("/")
 @app.route("/index")
 def index():
