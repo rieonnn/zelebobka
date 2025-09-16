@@ -1,6 +1,7 @@
 from flask import Flask, url_for, request, redirect
 import datetime
 
+
 app = Flask(__name__)
 
 @app.errorhandler(404)
@@ -162,11 +163,13 @@ def author():
             </body>
         </html>"""
 
+from flask import make_response
+
 @app.route('/lab1/image')
 def image():
     path = url_for("static", filename="oak.jpg")
     css = url_for("static", filename="lab1.css")
-    return f'''
+    html = f'''
 <!doctype html>
 <html>
     <head>
@@ -180,6 +183,13 @@ def image():
     </body>
 </html>
 '''
+    response = make_response(html)
+    # Стандартный заголовок языка
+    response.headers['Content-Language'] = 'ru'
+    # Два своих кастомных
+    response.headers['X-Lab-Work'] = 'Lab1'
+    response.headers['X-Author'] = 'Andreeva Irina'
+    return response
 
 count = 0
 
