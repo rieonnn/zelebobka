@@ -130,6 +130,24 @@ def lab1():
         </p>
         <hr>
         <a href="/">На главную</a>
+
+        <h2>Список роутов</h2>
+        <ul>
+            <li><a href="/lab1/web">/lab1/web</a></li>
+            <li><a href="/lab1/author">/lab1/author</a></li>
+            <li><a href="/lab1/image">/lab1/image</a></li>
+            <li><a href="/lab1/counter">/lab1/counter</a></li>
+            <li><a href="/lab1/reset_counter">/lab1/reset_counter</a></li>
+            <li><a href="/lab1/info">/lab1/info</a></li>
+            <li><a href="/lab1/created">/lab1/created</a></li>
+            <li><a href="/cause_error">/cause_error</a></li>
+            <li><a href="/error/400">/error/400</a></li>
+            <li><a href="/error/401">/error/401</a></li>
+            <li><a href="/error/402">/error/402</a></li>
+            <li><a href="/error/403">/error/403</a></li>
+            <li><a href="/error/405">/error/405</a></li>
+            <li><a href="/error/418">/error/418</a></li>
+        </ul>
     </body>
 </html>
 '''
