@@ -1,0 +1,50 @@
+/* Общие стили для всей страницы */
+body {
+    font-family: 'Cournier New';
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Заголовок */
+header {
+    background-color: #411811;
+    color: white;
+    padding: 15px;
+    font-size: 1.2em;
+    text-align: center;
+    font-family: 'Georgia';
+}
+
+/* Основной блок */
+main {
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+/* Футер */
+footer {
+    background-color: #231f1f;
+    color: #ddd;
+    text-align: right;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    font-family: 'Georgia';
+    font-style: italic;
+}
+
+/* Стили для формул и результатов */
+main p {
+    margin: 8px 0;
+}
+
+sup {
+    font-size: 0.8em;
+    vertical-align: super;
+}
