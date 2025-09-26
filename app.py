@@ -390,3 +390,21 @@ def calc_default():
 @app.route('/lab2/calc/<int:a>')
 def calc_single(a):
     return redirect(url_for('calc', a=a, b=1))
+
+books = [
+    {"title": "Оно", "author": "Стивен Кинг", "genre": "Ужасы", "pages": 1138},
+    {"title": "Сияние", "author": "Стивен Кинг", "genre": "Ужасы", "pages": 447},
+    {"title": "Зелёная миля", "author": "Стивен Кинг", "genre": "Драма", "pages": 400},
+    {"title": "Под куполом", "author": "Стивен Кинг", "genre": "Фантастика", "pages": 1071},
+    {"title": "Мизери", "author": "Стивен Кинг", "genre": "Триллер", "pages": 400},
+    {"title": "Чапаев и Пустота", "author": "Виктор Пелевин", "genre": "Философский роман", "pages": 320},
+    {"title": "Generation \"П\"", "author": "Виктор Пелевин", "genre": "Сатирический роман", "pages": 432},
+    {"title": "Омон Ра", "author": "Виктор Пелевин", "genre": "Сатира", "pages": 192},
+    {"title": "Жизнь насекомых", "author": "Виктор Пелевин", "genre": "Философская фантастика", "pages": 256},
+    {"title": "Священная книга оборотня", "author": "Виктор Пелевин", "genre": "Фантастика", "pages": 384},
+]
+
+# Обработчик для списка книг
+@app.route('/lab2/books')
+def show_books():
+    return render_template("books.html", books=books)
