@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, redirect, abort, render_template
+from flask import Flask, url_for, request, redirect, abort, render_template, render_template_string
 import datetime
 
 
@@ -307,23 +307,36 @@ flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашк
 def flowers(flower_id):
     if flower_id >= len(flower_list):
         abort(404)
-    else:
-        return "цветок: " + flower_list[flower_id]
+    return render_template("flower.html",
+                           idx=flower_id,
+                           name=flower_list[flower_id])
 
+
+@app.route('/lab2/add_flower/')
 @app.route('/lab2/add_flower/<name>')
-def add_flower(name):
+def add_flower(name=None):
+    if not name:
+        return "вы не задали имя цветка", 400
+
     flower_list.append(name)
-    return f'''
-<!doctype html>
-<html>
-    <body>
-    <h1>Добавлен новый цветок</h1>
-    <p>Название нового цветка: {name}</p>
-    <p>Всего цветов: {len(flower_list)}</p>
-    <p>Полный список: {flower_list}</p>
-    </body>
-</html>
-'''
+    return render_template("add_flower.html",
+                           name=name,
+                           count=len(flower_list))
+
+@app.route('/lab2/all_flowers/')
+def all_flowers():
+    return render_template("all_flowers.html",
+                           flowers=flower_list,
+                           count=len(flower_list))
+
+
+@app.route('/lab2/clear_flowers/')
+def clear_flowers():
+    flower_list.clear()
+    return render_template("clear_flowers.html",
+                           count=len(flower_list))
+
+
 @app.route('/lab2/example')
 def example():
     name, lab_number, group, course = 'Ирина Андреева', 2, 'ФБИ-33', '3 курс'

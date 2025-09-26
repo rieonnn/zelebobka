@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Все цветы</title></head>
+<body>
+    <h1>Список всех цветов</h1>
+    <p>Общее количество: {{ count }}</p>
+    <ul>
+        {% for flower in flowers %}
+        <li>{{ loop.index0 }}. {{ flower }}</li>
+        {% endfor %}
+    </ul>
+    <p><a href="/lab2/clear_flowers/">Очистить список</a></p>
+</body>
+</html>
