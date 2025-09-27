@@ -302,39 +302,61 @@ def a():
 def a2():
     return 'без слэша'
 
-flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашка']
+flower_list = [
+    {"name": "роза", "price": 300},
+    {"name": "тюльпан", "price": 310},
+    {"name": "незабудка", "price": 320},
+    {"name": "ромашка", "price": 330}
+]
 
+# Страница отдельного цветка
 @app.route('/lab2/flowers/<int:flower_id>')
 def flowers(flower_id):
-    if flower_id >= len(flower_list):
+    if not (0 <= flower_id < len(flower_list)):
         abort(404)
     return render_template("flower.html",
                            idx=flower_id,
-                           name=flower_list[flower_id])
+                           flower=flower_list[flower_id])
 
+# Добавление нового цветка
+@app.route('/lab2/add_flower', methods=['POST'])
+def add_flower():
+    name = (request.form.get('name') or '').strip()
+    price = request.form.get('price')
 
-@app.route('/lab2/add_flower/')
-@app.route('/lab2/add_flower/<name>')
-def add_flower(name=None):
     if not name:
-        return "вы не задали имя цветка", 400
+        return render_template("error.html", message="Ошибка: вы не задали имя цветка")
 
-    flower_list.append(name)
+    try:
+        price = int(price)
+    except (TypeError, ValueError):
+        return render_template("error.html", message="Ошибка: некорректная цена")
+
+    flower_list.append({"name": name, "price": price})
     return render_template("add_flower.html",
                            name=name,
+                           price=price,
                            count=len(flower_list))
 
+# Удаление одного цветка по номеру
+@app.route('/lab2/del_flower/<int:flower_id>')
+def del_flower(flower_id):
+    if not (0 <= flower_id < len(flower_list)):
+        abort(404)
+    flower_list.pop(flower_id)
+    return redirect(url_for('all_flowers'))
+
+# Удаление всех цветов
+@app.route('/lab2/clear_flowers/')
+def clear_flowers():
+    flower_list.clear()
+    return redirect(url_for('all_flowers'))
+
+# Список всех цветов
 @app.route('/lab2/all_flowers/')
 def all_flowers():
     return render_template("all_flowers.html",
                            flowers=flower_list,
-                           count=len(flower_list))
-
-
-@app.route('/lab2/clear_flowers/')
-def clear_flowers():
-    flower_list.clear()
-    return render_template("clear_flowers.html",
                            count=len(flower_list))
 
 
