@@ -408,3 +408,30 @@ books = [
 @app.route('/lab2/books')
 def show_books():
     return render_template("books.html", books=books)
+
+objects = [
+    {"name": "Клубника", "description": "Сочная красная ягода", "image": "object1.jpg"},
+    {"name": "Малина", "description": "Маленькая и ароматная", "image": "object2.jpg"},
+    {"name": "Лимон", "description": "Кислый и яркий фрукт", "image": "object3.jpg"},
+    {"name": "Тыква", "description": "Оранжевый овощ для супов", "image": "object4.jpg"},
+    {"name": "Котёнок", "description": "Милый пушистый друг", "image": "object5.jpg"},
+    {"name": "Щенок", "description": "Игривый маленький пес", "image": "object6.jpg"},
+    {"name": "Стол", "description": "Деревянный обеденный стол", "image": "object7.jpg"},
+    {"name": "Стул", "description": "Удобный для сидения", "image": "object8.jpg"},
+    {"name": "Машина", "description": "Красный спортивный автомобиль", "image": "object9.jpg"},
+    {"name": "Велосипед", "description": "Средство передвижения на двух колёсах", "image": "object10.jpg"},
+    {"name": "Мяч", "description": "Игрушка для игр на улице", "image": "object11.jpg"},
+    {"name": "Книга", "description": "Интересное чтение для вечера", "image": "object12.jpg"},
+    {"name": "Робот", "description": "Игрушка для ребёнка", "image": "object13.jpg"},
+    {"name": "Апельсин", "description": "Сочный цитрусовый фрукт", "image": "object14.jpg"},
+    {"name": "Груша", "description": "Сладкий фрукт с мягкой текстурой", "image": "object15.jpg"},
+    {"name": "Машина скорой помощи", "description": "Красная с белыми полосами", "image": "object16.jpg"},
+    {"name": "Кресло", "description": "Комфортное для отдыха", "image": "object17.jpg"},
+    {"name": "Лампа", "description": "Освещает комнату", "image": "object18.jpg"},
+    {"name": "Ёжик", "description": "Милое колючее животное", "image": "object19.jpg"},
+    {"name": "Кактус", "description": "Растение с колючками", "image": "object20.jpg"},
+]
+
+@app.route('/lab2/objects')
+def show_objects():
+    return render_template("objects.html", objects=objects)

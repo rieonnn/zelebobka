@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Разнообразные объекты</title>
+    <style>
+        .object-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .object-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .object-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Разнообразные объекты</h1>
+    <div class="object-container">
+        {% for obj in objects %}
+        <div class="object-card">
+            <img src="{{ url_for('static', filename=obj.image) }}" alt="{{ obj.name }}">
+            <h3>{{ obj.name }}</h3>
+            <p>{{ obj.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
