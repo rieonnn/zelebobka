@@ -1,8 +1,41 @@
-from flask import Flask, url_for, request, redirect, abort, render_template, render_template_string
+from flask import Flask, request
 import datetime
+from lab1 import lab1
+from lab2 import lab2
 
 
 app = Flask(__name__)
+app.register_blueprint(lab1)
+app.register_blueprint(lab2)
+
+
+@app.route("/")
+@app.route("/index")
+def index():
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>НГТУ, ФБ, Лабораторные работы</title>
+    </head>
+    <body>
+        <h1>НГТУ, ФБ, WEB-программирование, часть 2.<br> Список лабораторных</h1>
+        <ul>
+            <li><a href="/lab1">Первая лабораторная</a></li>
+            <li><a href="/lab2">Вторая лабораторная</a></i>
+        </ul>
+        <hr>
+        <footer>
+            <p>Андреева Ирина Александровна</p>
+            <p>Группа: ФБИ-33</p>
+            <p>Курс: 3</p>
+            <p>2025 год</p>
+        </footer>
+    </body>
+</html>
+'''
+
 
 # список для хранения логов
 error_log = []
@@ -64,34 +97,42 @@ def not_found(err):
 </html>
 ''', 404
 
+
 @app.route("/error/400")
 def error400():
     return "<h1>400 — Bad Request (Некорректный запрос)</h1>", 400
+
 
 @app.route("/error/401")
 def error401():
     return "<h1>401 — Unauthorized (Требуется авторизация)</h1>", 401
 
+
 @app.route("/error/402")
 def error402():
     return "<h1>402 — Payment Required (Требуется оплата)</h1>", 402
+
 
 @app.route("/error/403")
 def error403():
     return "<h1>403 — Forbidden (Доступ запрещён)</h1>", 403
 
+
 @app.route("/error/405")
 def error405():
     return "<h1>405 — Method Not Allowed (Метод не разрешён)</h1>", 405
+
 
 @app.route("/error/418")
 def error418():
     return "<h1>418 — I'm a teapot (Я чайник)</h1>", 418
 
+
 # Маршрут, специально вызывающий ошибку
 @app.route("/cause_error")
 def cause_error():
     return 1 / 0  # деление на ноль вызовет ошибку 500
+
 
 # Перехватчик ошибки 500
 @app.errorhandler(500)
@@ -115,346 +156,3 @@ def internal_error(err):
     </body>
 </html>
 ''', 500
-
-@app.route("/")
-@app.route("/index")
-def index():
-    return '''
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>НГТУ, ФБ, Лабораторные работы</title>
-    </head>
-    <body>
-        <h1>НГТУ, ФБ, WEB-программирование, часть 2.<br> Список лабораторных</h1>
-        <ul>
-            <li><a href="/lab1">Первая лабораторная</a></li>
-            <li><a href="/lab2">Вторая лабораторная</a></i>
-        </ul>
-        <hr>
-        <footer>
-            <p>Андреева Ирина Александровна</p>
-            <p>Группа: ФБИ-33</p>
-            <p>Курс: 3</p>
-            <p>2025 год</p>
-        </footer>
-    </body>
-</html>
-'''
-
-@app.route("/lab1")
-def lab1():
-    return '''
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Лабораторная 1</title>
-    </head>
-    <body>
-        <p>
-        Flask — фреймворк для создания веб-приложений на языке программирования Python,
-        использующий набор инструментов Werkzeug, а также шаблонизатор Jinja2.
-        Относится к категории так называемых микрофреймворков — минималистичных
-        каркасов веб-приложений, сознательно предоставляющих лишь самые базовые возможности.
-        </p>
-        <hr>
-        <a href="/">На главную</a>
-
-        <h2>Список роутов</h2>
-        <ul>
-            <li><a href="/lab1/web">/lab1/web</a></li>
-            <li><a href="/lab1/author">/lab1/author</a></li>
-            <li><a href="/lab1/image">/lab1/image</a></li>
-            <li><a href="/lab1/counter">/lab1/counter</a></li>
-            <li><a href="/lab1/reset_counter">/lab1/reset_counter</a></li>
-            <li><a href="/lab1/info">/lab1/info</a></li>
-            <li><a href="/lab1/created">/lab1/created</a></li>
-            <li><a href="/cause_error">/cause_error</a></li>
-            <li><a href="/error/400">/error/400</a></li>
-            <li><a href="/error/401">/error/401</a></li>
-            <li><a href="/error/402">/error/402</a></li>
-            <li><a href="/error/403">/error/403</a></li>
-            <li><a href="/error/405">/error/405</a></li>
-            <li><a href="/error/418">/error/418</a></li>
-        </ul>
-    </body>
-</html>
-'''
-
-@app.route("/lab1/web")
-def web():
-    return """<!doctype html>
-        <html>
-           <body>
-               <h1>web-сервер на flask</h1>
-               <a href="/lab1/author">author</a>
-           </body>
-        </html>""", 200, {
-            'X-Server': 'sample',
-            'Content-Type': 'text/plan; charset=utf-8'
-            }
-
-@app.route("/lab1/author")
-def author():
-    name = "Андреева Ирина Александровна"
-    group = "ФБИ-33"
-    faculty = "ФБ"
-
-    return """<!doctype html>
-        <html>
-            <body>
-                <p>Студент: """ + name + """</p>
-                <p>Группа: """ + group + """</p>
-                <p>Факультет: """ + faculty + """</p>
-                <a href="/lab1/web">web</a>
-            </body>
-        </html>"""
-
-from flask import make_response
-
-@app.route('/lab1/image')
-def image():
-    path = url_for("static", filename="oak.jpg")
-    css = url_for("static", filename="lab1.css")
-    html = f'''
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Дуб</title>
-        <link rel="stylesheet" href="{css}">
-    </head>
-    <body>
-        <h1>Дуб</h1>
-        <img src="{path}" alt="oak">
-    </body>
-</html>
-'''
-    response = make_response(html)
-    # Стандартный заголовок языка
-    response.headers['Content-Language'] = 'ru'
-    # Два своих кастомных
-    response.headers['X-Lab-Work'] = 'Lab1'
-    response.headers['X-Author'] = 'Andreeva Irina'
-    return response
-
-count = 0
-
-@app.route('/lab1/counter')
-def counter():
-    global count
-    count += 1
-    time = datetime.datetime.today()
-    url = request.url
-    client_ip = request.remote_addr
-
-    return '''
-<!doctype html>
-<html>
-    <body>
-        Сколько раз вы сюда заходили: ''' + str(count) + '''
-        <hr>
-        Дата и время: ''' + str(time) + '''<br>
-        Запрошенный адрес: ''' + str(url) + '''<br>
-        Ваш IP-адрес: ''' + str(client_ip) + '''<br>
-        <a href="/lab1/reset_counter">Сбросить счётчик</a>
-    </body>
-</html>
-'''
-
-@app.route('/lab1/reset_counter')
-def reset_counter():
-    global count
-    count = 0
-    return '''
-<!doctype html>
-<html>
-    <body>
-        <h1>Счётчик очищен!</h1>
-        <a href="/lab1/counter">Вернуться к счётчику</a>
-    </body>
-</html>
-'''
-
-@app.route("/lab1/info")
-def info():
-    return redirect("/lab1/author")
-
-@app.route("/lab1/created")
-def created():
-    return '''
-<!doctype html>
-<html>
-    <body>
-        <h1>Создано успешно</h1>
-        <div><i>что-то создано...</i></div>
-    </body>
-</html>
-''', 201
-
-@app.route('/lab2/a/')
-def a():
-    return 'со слэшем'
-
-@app.route('/lab2/a')
-def a2():
-    return 'без слэша'
-
-flower_list = [
-    {"name": "роза", "price": 300},
-    {"name": "тюльпан", "price": 310},
-    {"name": "незабудка", "price": 320},
-    {"name": "ромашка", "price": 330}
-]
-
-# Страница отдельного цветка
-@app.route('/lab2/flowers/<int:flower_id>')
-def flowers(flower_id):
-    if not (0 <= flower_id < len(flower_list)):
-        abort(404)
-    return render_template("flower.html",
-                           idx=flower_id,
-                           flower=flower_list[flower_id])
-
-# Добавление нового цветка
-@app.route('/lab2/add_flower', methods=['POST'])
-def add_flower():
-    name = (request.form.get('name') or '').strip()
-    price = request.form.get('price')
-
-    if not name:
-        return render_template("error.html", message="Ошибка: вы не задали имя цветка")
-
-    try:
-        price = int(price)
-    except (TypeError, ValueError):
-        return render_template("error.html", message="Ошибка: некорректная цена")
-
-    flower_list.append({"name": name, "price": price})
-    return render_template("add_flower.html",
-                           name=name,
-                           price=price,
-                           count=len(flower_list))
-
-# Удаление одного цветка по номеру
-@app.route('/lab2/del_flower/<int:flower_id>')
-def del_flower(flower_id):
-    if not (0 <= flower_id < len(flower_list)):
-        abort(404)
-    flower_list.pop(flower_id)
-    return redirect(url_for('all_flowers'))
-
-# Удаление всех цветов
-@app.route('/lab2/clear_flowers/')
-def clear_flowers():
-    flower_list.clear()
-    return redirect(url_for('all_flowers'))
-
-# Список всех цветов
-@app.route('/lab2/all_flowers/')
-def all_flowers():
-    return render_template("all_flowers.html",
-                           flowers=flower_list,
-                           count=len(flower_list))
-
-
-@app.route('/lab2/example')
-def example():
-    name, lab_number, group, course = 'Ирина Андреева', 2, 'ФБИ-33', '3 курс'
-    fruits = [
-        {'name': 'яблоки', 'price': 100},
-        {'name': 'груши', 'price': 120},
-        {'name': 'апельсины', 'price': 80},
-        {'name': 'мандарины', 'price': 95},
-        {'name': 'манго', 'price': 321},
-    ]
-    return render_template('example.html',
-                            name=name,
-                            lab_number=lab_number,
-                            group=group,
-                            course=course, fruits=fruits)
-
-@app.route('/lab2/')
-def lab2():
-    return render_template('lab2.html')
-
-@app.route('/lab2/filters')
-def filters():
-    phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
-
-# Роут с двумя параметрами
-@app.route('/lab2/calc/<int:a>/<int:b>')
-def calc(a, b):
-    results = {
-        'sum': a + b,
-        'difference': a - b,
-        'product': a * b,
-        'quotient': a / b if b != 0 else 'undefined',
-        'power': a ** b
-    }
-    return (
-        f"<h1>Расчет с параметрами</h1>"
-        f"{a} + {b} = {results['sum']}<br>"
-        f"{a} - {b} = {results['difference']}<br>"
-        f"{a} * {b} = {results['product']}<br>"
-        f"{a} / {b} = {results['quotient']}<br>"
-        f"{a}^{b} = {results['power']}"
-    )
-
-# Перенаправление с /lab2/calc/ на /lab2/calc/1/1
-@app.route('/lab2/calc/')
-def calc_default():
-    return redirect(url_for('calc', a=1, b=1))
-
-# Перенаправление с /lab2/calc/<int:a> на /lab2/calc/a/1
-@app.route('/lab2/calc/<int:a>')
-def calc_single(a):
-    return redirect(url_for('calc', a=a, b=1))
-
-books = [
-    {"title": "Оно", "author": "Стивен Кинг", "genre": "Ужасы", "pages": 1138},
-    {"title": "Сияние", "author": "Стивен Кинг", "genre": "Ужасы", "pages": 447},
-    {"title": "Зелёная миля", "author": "Стивен Кинг", "genre": "Драма", "pages": 400},
-    {"title": "Под куполом", "author": "Стивен Кинг", "genre": "Фантастика", "pages": 1071},
-    {"title": "Мизери", "author": "Стивен Кинг", "genre": "Триллер", "pages": 400},
-    {"title": "Чапаев и Пустота", "author": "Виктор Пелевин", "genre": "Философский роман", "pages": 320},
-    {"title": "Generation \"П\"", "author": "Виктор Пелевин", "genre": "Сатирический роман", "pages": 432},
-    {"title": "Омон Ра", "author": "Виктор Пелевин", "genre": "Сатира", "pages": 192},
-    {"title": "Жизнь насекомых", "author": "Виктор Пелевин", "genre": "Философская фантастика", "pages": 256},
-    {"title": "Священная книга оборотня", "author": "Виктор Пелевин", "genre": "Фантастика", "pages": 384},
-]
-
-# Обработчик для списка книг
-@app.route('/lab2/books')
-def show_books():
-    return render_template("books.html", books=books)
-
-objects = [
-    {"name": "Клубника", "description": "Сочная красная ягода", "image": "object1.jpg"},
-    {"name": "Малина", "description": "Маленькая и ароматная", "image": "object2.jpg"},
-    {"name": "Лимон", "description": "Кислый и яркий фрукт", "image": "object3.jpg"},
-    {"name": "Тыква", "description": "Оранжевый овощ для супов", "image": "object4.jpg"},
-    {"name": "Котёнок", "description": "Милый пушистый друг", "image": "object5.jpg"},
-    {"name": "Щенок", "description": "Игривый маленький пес", "image": "object6.jpg"},
-    {"name": "Стол", "description": "Деревянный обеденный стол", "image": "object7.jpg"},
-    {"name": "Стул", "description": "Удобный для сидения", "image": "object8.jpg"},
-    {"name": "Машина", "description": "Красный спортивный автомобиль", "image": "object9.jpg"},
-    {"name": "Велосипед", "description": "Средство передвижения на двух колёсах", "image": "object10.jpg"},
-    {"name": "Мяч", "description": "Игрушка для игр на улице", "image": "object11.jpg"},
-    {"name": "Книга", "description": "Интересное чтение для вечера", "image": "object12.jpg"},
-    {"name": "Робот", "description": "Игрушка для ребёнка", "image": "object13.jpg"},
-    {"name": "Апельсин", "description": "Сочный цитрусовый фрукт", "image": "object14.jpg"},
-    {"name": "Груша", "description": "Сладкий фрукт с мягкой текстурой", "image": "object15.jpg"},
-    {"name": "Машина скорой помощи", "description": "Красная с белыми полосами", "image": "object16.jpg"},
-    {"name": "Кресло", "description": "Комфортное для отдыха", "image": "object17.jpg"},
-    {"name": "Лампа", "description": "Освещает комнату", "image": "object18.jpg"},
-    {"name": "Ёжик", "description": "Милое колючее животное", "image": "object19.jpg"},
-    {"name": "Кактус", "description": "Растение с колючками", "image": "object20.jpg"},
-]
-
-@app.route('/lab2/objects')
-def show_objects():
-    return render_template("objects.html", objects=objects)
