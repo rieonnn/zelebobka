@@ -163,6 +163,44 @@ objects = [
     {"name": "Кактус", "description": "Растение с колючками", "image": "object20.jpg"},
 ]
 
+# список для хранения логов
+error_log = []
+
 @lab2.route('/lab2/objects')
 def show_objects():
     return render_template("objects.html", objects=objects)
+
+@lab2.route("/error/400")
+def error400():
+    return "<h1>400 — Bad Request (Некорректный запрос)</h1>", 400
+
+
+@lab2.route("/error/401")
+def error401():
+    return "<h1>401 — Unauthorized (Требуется авторизация)</h1>", 401
+
+
+@lab2.route("/error/402")
+def error402():
+    return "<h1>402 — Payment Required (Требуется оплата)</h1>", 402
+
+
+@lab2.route("/error/403")
+def error403():
+    return "<h1>403 — Forbidden (Доступ запрещён)</h1>", 403
+
+
+@lab2.route("/error/405")
+def error405():
+    return "<h1>405 — Method Not Allowed (Метод не разрешён)</h1>", 405
+
+
+@lab2.route("/error/418")
+def error418():
+    return "<h1>418 — I'm a teapot (Я чайник)</h1>", 418
+
+
+# Маршрут, специально вызывающий ошибку
+@lab2.route("/cause_error")
+def cause_error():
+    return 1 / 0  # деление на ноль вызовет ошибку 500

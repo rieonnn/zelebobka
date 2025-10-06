@@ -3,10 +3,12 @@ import datetime
 from lab1 import lab1
 from lab2 import lab2
 
-
 app = Flask(__name__)
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
+
+
+error_log = []
 
 
 @app.route("/")
@@ -36,9 +38,6 @@ def index():
 </html>
 '''
 
-
-# список для хранения логов
-error_log = []
 
 @app.errorhandler(404)
 def not_found(err):
@@ -96,42 +95,6 @@ def not_found(err):
     </body>
 </html>
 ''', 404
-
-
-@app.route("/error/400")
-def error400():
-    return "<h1>400 — Bad Request (Некорректный запрос)</h1>", 400
-
-
-@app.route("/error/401")
-def error401():
-    return "<h1>401 — Unauthorized (Требуется авторизация)</h1>", 401
-
-
-@app.route("/error/402")
-def error402():
-    return "<h1>402 — Payment Required (Требуется оплата)</h1>", 402
-
-
-@app.route("/error/403")
-def error403():
-    return "<h1>403 — Forbidden (Доступ запрещён)</h1>", 403
-
-
-@app.route("/error/405")
-def error405():
-    return "<h1>405 — Method Not Allowed (Метод не разрешён)</h1>", 405
-
-
-@app.route("/error/418")
-def error418():
-    return "<h1>418 — I'm a teapot (Я чайник)</h1>", 418
-
-
-# Маршрут, специально вызывающий ошибку
-@app.route("/cause_error")
-def cause_error():
-    return 1 / 0  # деление на ноль вызовет ошибку 500
 
 
 # Перехватчик ошибки 500
