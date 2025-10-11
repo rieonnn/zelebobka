@@ -5,6 +5,15 @@
 
 {# основной контент: #}
 {% block main %}
+    <style>
+        .error {
+            color: #ff0000;
+            font-size: 13px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+    </style>
+
     <h1>Формы, cookie</h1>
     <div>
         Привет, <span style="color: {{name_color}}"> {{ name }}!</span>
