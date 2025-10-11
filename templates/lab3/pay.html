@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{# номер лабораторной работы: #}
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{# основной контент: #}
+{% block main %}
+
+    <h1>Оплата</h1>
+    <div>
+        Сумма к оплате: {{ price }}
+    </div>
+
+    <form action="/lab3/success">
+        <!-- Скрытые поля для передачи параметров заказа -->
+        <input type="hidden" name="drink" value="{{ request.args.get('drink', 'coffee') }}">
+        {% if request.args.get('milk') %}
+        <input type="hidden" name="milk" value="on">
+        {% endif %}
+        {% if request.args.get('sugar') %}
+        <input type="hidden" name="sugar" value="on">
+        {% endif %}
+
+        <div>Номер банковской карты:</div>
+        <label>
+            <input type="text" name="card" pattern="\d{16}">
+        </label>
+
+        <div>Имя держателя карты:</div>
+        <label>
+            <input type="text" name="name">
+        </label>
+
+        <div>Номер CVV:</div>
+        <label>
+            <input type="text" name="cvv" size="3" pattern="\d{3}">
+        </label>
+
+        <div>
+            <button type="submit">Оплатить</button>
+            <a href="/lab3/order">Отказаться</a>
+        </div>
+    </form>
+{% endblock %}
