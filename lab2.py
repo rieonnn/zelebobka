@@ -22,7 +22,7 @@ flower_list = [
 def flowers(flower_id):
     if not (0 <= flower_id < len(flower_list)):
         abort(404)
-    return render_template("flower.html",
+    return render_template("/lab2/flower.html",
                            idx=flower_id,
                            flower=flower_list[flower_id])
 
@@ -33,7 +33,7 @@ def add_flower():
     price = request.form.get('price')
 
     if not name:
-        return render_template("error.html", message="Ошибка: вы не задали имя цветка")
+        return render_template("/lab2/error.html", message="Ошибка: вы не задали имя цветка")
 
     try:
         price = int(price)
@@ -41,7 +41,7 @@ def add_flower():
         return render_template("error.html", message="Ошибка: некорректная цена")
 
     flower_list.lab2end({"name": name, "price": price})
-    return render_template("add_flower.html",
+    return render_template("/lab2/add_flower.html",
                            name=name,
                            price=price,
                            count=len(flower_list))
@@ -52,18 +52,18 @@ def del_flower(flower_id):
     if not (0 <= flower_id < len(flower_list)):
         abort(404)
     flower_list.pop(flower_id)
-    return redirect(url_for('all_flowers'))
+    return redirect(url_for('lab2.all_flowers'))
 
 # Удаление всех цветов
 @lab2.route('/lab2/clear_flowers/')
 def clear_flowers():
     flower_list.clear()
-    return redirect(url_for('all_flowers'))
+    return redirect(url_for('lab2.all_flowers'))
 
 # Список всех цветов
 @lab2.route('/lab2/all_flowers/')
 def all_flowers():
-    return render_template("all_flowers.html",
+    return render_template("lab2/all_flowers.html",
                            flowers=flower_list,
                            count=len(flower_list))
 
@@ -78,7 +78,7 @@ def example():
         {'name': 'мандарины', 'price': 95},
         {'name': 'манго', 'price': 321},
     ]
-    return render_template('example.html',
+    return render_template('/lab2/example.html',
                             name=name,
                             lab_number=lab_number,
                             group=group,
@@ -86,12 +86,12 @@ def example():
 
 @lab2.route('/lab2/')
 def lab():
-    return render_template('lab2.html')
+    return render_template('/lab2/lab2.html')
 
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
+    return render_template('/lab2/filter.html', phrase=phrase)
 
 # Роут с двумя параметрами
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
@@ -115,12 +115,12 @@ def calc(a, b):
 # Перенаправление с /lab2/calc/ на /lab2/calc/1/1
 @lab2.route('/lab2/calc/')
 def calc_default():
-    return redirect(url_for('calc', a=1, b=1))
+    return redirect(url_for('lab2.calc', a=1, b=1))
 
 # Перенаправление с /lab2/calc/<int:a> на /lab2/calc/a/1
 @lab2.route('/lab2/calc/<int:a>')
 def calc_single(a):
-    return redirect(url_for('calc', a=a, b=1))
+    return redirect(url_for('lab2.calc', a=a, b=1))
 
 books = [
     {"title": "Оно", "author": "Стивен Кинг", "genre": "Ужасы", "pages": 1138},
@@ -138,29 +138,29 @@ books = [
 # Обработчик для списка книг
 @lab2.route('/lab2/books')
 def show_books():
-    return render_template("books.html", books=books)
+    return render_template("/lab2/books.html", books=books)
 
 objects = [
-    {"name": "Клубника", "description": "Сочная красная ягода", "image": "object1.jpg"},
-    {"name": "Малина", "description": "Маленькая и ароматная", "image": "object2.jpg"},
-    {"name": "Лимон", "description": "Кислый и яркий фрукт", "image": "object3.jpg"},
-    {"name": "Тыква", "description": "Оранжевый овощ для супов", "image": "object4.jpg"},
-    {"name": "Котёнок", "description": "Милый пушистый друг", "image": "object5.jpg"},
-    {"name": "Щенок", "description": "Игривый маленький пес", "image": "object6.jpg"},
-    {"name": "Стол", "description": "Деревянный обеденный стол", "image": "object7.jpg"},
-    {"name": "Стул", "description": "Удобный для сидения", "image": "object8.jpg"},
-    {"name": "Машина", "description": "Красный спортивный автомобиль", "image": "object9.jpg"},
-    {"name": "Велосипед", "description": "Средство передвижения на двух колёсах", "image": "object10.jpg"},
-    {"name": "Мяч", "description": "Игрушка для игр на улице", "image": "object11.jpg"},
-    {"name": "Книга", "description": "Интересное чтение для вечера", "image": "object12.jpg"},
-    {"name": "Робот", "description": "Игрушка для ребёнка", "image": "object13.jpg"},
-    {"name": "Апельсин", "description": "Сочный цитрусовый фрукт", "image": "object14.jpg"},
-    {"name": "Груша", "description": "Сладкий фрукт с мягкой текстурой", "image": "object15.jpg"},
-    {"name": "Машина скорой помощи", "description": "Красная с белыми полосами", "image": "object16.jpg"},
-    {"name": "Кресло", "description": "Комфортное для отдыха", "image": "object17.jpg"},
-    {"name": "Лампа", "description": "Освещает комнату", "image": "object18.jpg"},
-    {"name": "Ёжик", "description": "Милое колючее животное", "image": "object19.jpg"},
-    {"name": "Кактус", "description": "Растение с колючками", "image": "object20.jpg"},
+    {"name": "Клубника", "description": "Сочная красная ягода", "image": "lab2/object1.jpg"},
+    {"name": "Малина", "description": "Маленькая и ароматная", "image": "lab2/object2.jpg"},
+    {"name": "Лимон", "description": "Кислый и яркий фрукт", "image": "lab2/object3.jpg"},
+    {"name": "Тыква", "description": "Оранжевый овощ для супов", "image": "lab2/object4.jpg"},
+    {"name": "Котёнок", "description": "Милый пушистый друг", "image": "lab2/object5.jpg"},
+    {"name": "Щенок", "description": "Игривый маленький пес", "image": "lab2/object6.jpg"},
+    {"name": "Стол", "description": "Деревянный обеденный стол", "image": "lab2/object7.jpg"},
+    {"name": "Стул", "description": "Удобный для сидения", "image": "lab2/object8.jpg"},
+    {"name": "Машина", "description": "Красный спортивный автомобиль", "image": "lab2/object9.jpg"},
+    {"name": "Велосипед", "description": "Средство передвижения на двух колёсах", "image": "lab2/object10.jpg"},
+    {"name": "Мяч", "description": "Игрушка для игр на улице", "image": "lab2/object11.jpg"},
+    {"name": "Книга", "description": "Интересное чтение для вечера", "image": "lab2/object12.jpg"},
+    {"name": "Робот", "description": "Игрушка для ребёнка", "image": "lab2/object13.jpg"},
+    {"name": "Апельсин", "description": "Сочный цитрусовый фрукт", "image": "lab2/object14.jpg"},
+    {"name": "Груша", "description": "Сладкий фрукт с мягкой текстурой", "image": "lab2/object15.jpg"},
+    {"name": "Машина скорой помощи", "description": "Красная с белыми полосами", "image": "lab2/object16.jpg"},
+    {"name": "Кресло", "description": "Комфортное для отдыха", "image": "lab2/object17.jpg"},
+    {"name": "Лампа", "description": "Освещает комнату", "image": "lab2/object18.jpg"},
+    {"name": "Ёжик", "description": "Милое колючее животное", "image": "lab2/object19.jpg"},
+    {"name": "Кактус", "description": "Растение с колючками", "image": "lab2/object20.jpg"},
 ]
 
 # список для хранения логов
@@ -168,7 +168,7 @@ error_log = []
 
 @lab2.route('/lab2/objects')
 def show_objects():
-    return render_template("objects.html", objects=objects)
+    return render_template("/lab2/objects.html", objects=objects)
 
 @lab2.route("/error/400")
 def error400():
@@ -199,8 +199,3 @@ def error405():
 def error418():
     return "<h1>418 — I'm a teapot (Я чайник)</h1>", 418
 
-
-# Маршрут, специально вызывающий ошибку
-@lab2.route("/cause_error")
-def cause_error():
-    return 1 / 0  # деление на ноль вызовет ошибку 500

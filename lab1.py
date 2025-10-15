@@ -76,8 +76,8 @@ def author():
 
 @lab1.route('/lab1/image')
 def image():
-    path = url_for("static", filename="oak.jpg")
-    css = url_for("static", filename="lab1.css")
+    path = url_for("static", filename="/lab1/oak.jpg")
+    css = url_for("static", filename="/lab1/lab1.css")
     html = f'''
 <!doctype html>
 <html>
@@ -156,3 +156,31 @@ def created():
     </body>
 </html>
 ''', 201
+
+# Маршрут, специально вызывающий ошибку
+@lab1.route("/cause_error")
+def cause_error():
+    return 1 / 0  # деление на ноль вызовет ошибку 500
+
+# Перехватчик ошибки 500
+@lab1.errorhandler(500)
+def internal_error(err):
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Ошибка 500 — внутренняя ошибка сервера</title>
+        <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+            h1 { color: #b52e31; }
+        </style>
+    </head>
+    <body>
+        <h1>Ошибка 500</h1>
+        <p>На сервере произошла внутренняя ошибка.<br>
+        Попробуйте обновить страницу позже.</p>
+        <a href="/">Вернуться на главную</a>
+    </body>
+</html>
+''', 500
