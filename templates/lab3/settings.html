@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{# номер лабораторной работы: #}
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{# основной контент: #}
+{% block main %}
+    <h1>Настройки стилей</h1>
+    <form method="get">
+        <div>
+            <label class="label" for="color">Выберите цвет текста:</label>
+            <input type="color" id="color" name="color" value="{{ color }}">
+        </div>
+
+        <div>
+            <label class="label" for="bg_color">Выберите цвет фона:</label>
+            <input type="color" id="bg_color" name="bg_color" value="{{ bg_color }}">
+        </div>
+
+        <div>
+            <label class="label" for="font_size">Размер шрифта:</label>
+            <select id="font_size" name="font_size">
+                <option value="12px" {% if font_size == '12px' %}selected{% endif %}>Маленький (12px)</option>
+                <option value="16px" {% if font_size == '16px' %}selected{% endif %}>Средний (16px)</option>
+                <option value="20px" {% if font_size == '20px' %}selected{% endif %}>Большой (20px)</option>
+                <option value="24px" {% if font_size == '24px' %}selected{% endif %}>Очень большой (24px)</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="label" for="font_style">Стиль шрифта:</label>
+            <select id="font_style" name="font_style">
+                <option value="Arial, sans-serif" {% if font_style == 'Arial, sans-serif' %}selected{% endif %}>Arial</option>
+                <option value="'Times New Roman', serif" {% if font_style == "'Times New Roman', serif" %}selected{% endif %}>Times New Roman</option>
+                <option value="'Courier New', monospace" {% if font_style == "'Courier New', monospace" %}selected{% endif %}>Courier New</option>
+                <option value="Verdana, sans-serif" {% if font_style == 'Verdana, sans-serif' %}selected{% endif %}>Verdana</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit">Применить настройки</button>
+        </div>
+    </form>
+{% endblock %}
