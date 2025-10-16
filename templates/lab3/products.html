@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block lab %}Поиск товаров по цене{% endblock %}
+
+{% block main %}
+<div style="max-width: 800px; margin: 30px auto; padding: 20px; font-family: Cournier New;">
+
+    <h2 style="text-align:center; margin-bottom: 20px; color:#7d7430;">Поиск товаров</h2>
+
+    <form method="get" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom: 20px;
+                              background-color:#f9f9f9; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+        <div style="flex:1; min-width:120px;">
+            <label><strong>Мин. цена:</strong></label><br>
+            <input type="number" name="min_price" placeholder="{{ min_placeholder }}" value="{{ min_price }}" style="width:100%;
+                                                                                                                    padding:8px; border-radius:5px;
+                                                                                                                    border:1px solid #ccc;">
+        </div>
+        <div style="flex:1; min-width:120px;">
+            <label><strong>Макс. цена:</strong></label><br>
+            <input type="number" name="max_price" placeholder="{{ max_placeholder }}" value="{{ max_price }}" style="width:100%;
+                                                                                                                     padding:8px; border-radius:5px;
+                                                                                                                     border:1px solid #ccc;">
+        </div>
+        <div style="align-self:end; display:flex; gap:10px;">
+            <button type="submit" style="padding:8px 16px; background-color:#3f3232;
+                                         color:white; border:none; border-radius:5px;
+                                         cursor:pointer;">Искать</button>
+
+            <a href="/lab3/products/clear" style="padding:8px 16px; background-color:#7a020e;
+                                                  color:white; text-decoration:none; border-radius:5px;
+                                                  display:inline-block;">Сброс</a>
+        </div>
+    </form>
+
+    <h3 style="margin-bottom:15px; text-align:center;">Найдено товаров: {{ count }}</h3>
+
+    {% if count == 0 %}
+        <p style="text-align:center; color:#888;">Не найдено ни одного товара</p>
+    {% else %}
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:15px;">
+        {% for p in products %}
+            <div style="border:1px solid #ddd; border-radius:8px; padding:15px;
+                        background-color:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin:0 0 10px 0; color:#40833e;">{{ p.name }}</h4>
+                <p style="margin:0 0 5px 0;"><strong>Бренд:</strong> {{ p.brand }}</p>
+                <p style="margin:0 0 5px 0;"><strong>Цвет:</strong> {{ p.color }}</p>
+                <p style="margin:0; font-weight:bold;">Цена: {{ p.price }}$</p>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

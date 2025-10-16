@@ -206,3 +206,76 @@ def train_ticket_result():
         insurance=insurance, age=age, from_city=from_city,
         to_city=to_city, date=date, price=price, is_child=(age < 18)
     )
+
+# Список товаров (смартфоны)
+products = [
+    {"name": "iPhone 14", "price": 900, "brand": "Apple", "color": "Black"},
+    {"name": "iPhone 13", "price": 700, "brand": "Apple", "color": "White"},
+    {"name": "Samsung Galaxy S23", "price": 850, "brand": "Samsung", "color": "Silver"},
+    {"name": "Samsung Galaxy S22", "price": 650, "brand": "Samsung", "color": "Black"},
+    {"name": "Google Pixel 7", "price": 600, "brand": "Google", "color": "White"},
+    {"name": "Google Pixel 6", "price": 500, "brand": "Google", "color": "Black"},
+    {"name": "OnePlus 11", "price": 750, "brand": "OnePlus", "color": "Green"},
+    {"name": "OnePlus 10", "price": 550, "brand": "OnePlus", "color": "Blue"},
+    {"name": "Xiaomi 13", "price": 650, "brand": "Xiaomi", "color": "Black"},
+    {"name": "Xiaomi 12", "price": 500, "brand": "Xiaomi", "color": "White"},
+    {"name": "Huawei P60", "price": 700, "brand": "Huawei", "color": "Gold"},
+    {"name": "Huawei P50", "price": 550, "brand": "Huawei", "color": "Black"},
+    {"name": "Sony Xperia 1 IV", "price": 950, "brand": "Sony", "color": "Black"},
+    {"name": "Sony Xperia 5 III", "price": 700, "brand": "Sony", "color": "Gray"},
+    {"name": "Motorola Edge 40", "price": 500, "brand": "Motorola", "color": "Blue"},
+    {"name": "Motorola Edge 30", "price": 400, "brand": "Motorola", "color": "Black"},
+    {"name": "Nokia X30", "price": 350, "brand": "Nokia", "color": "White"},
+    {"name": "Nokia G60", "price": 300, "brand": "Nokia", "color": "Gray"},
+    {"name": "Asus Zenfone 10", "price": 650, "brand": "Asus", "color": "Black"},
+    {"name": "Asus ROG Phone 6", "price": 900, "brand": "Asus", "color": "Red"},
+]
+
+@lab3.route('/lab3/products', methods=['GET'])
+def products_page():
+    min_price = request.args.get('min_price') or request.cookies.get('min_price')
+    max_price = request.args.get('max_price') or request.cookies.get('max_price')
+
+    filtered_products = products.copy()
+
+    try:
+        min_price_val = float(min_price) if min_price else None
+    except ValueError:
+        min_price_val = None
+    try:
+        max_price_val = float(max_price) if max_price else None
+    except ValueError:
+        max_price_val = None
+
+    if min_price_val and max_price_val and min_price_val > max_price_val:
+        min_price_val, max_price_val = max_price_val, min_price_val
+
+    if min_price_val is not None:
+        filtered_products = [p for p in filtered_products if p['price'] >= min_price_val]
+    if max_price_val is not None:
+        filtered_products = [p for p in filtered_products if p['price'] <= max_price_val]
+
+    prices = [p['price'] for p in products]
+    min_placeholder = min(prices)
+    max_placeholder = max(prices)
+
+    resp = make_response(render_template('/lab3/products.html',
+                                         products=filtered_products,
+                                         count=len(filtered_products),
+                                         min_price=min_price_val if min_price_val is not None else '',
+                                         max_price=max_price_val if max_price_val is not None else '',
+                                         min_placeholder=min_placeholder,
+                                         max_placeholder=max_placeholder))
+    if min_price_val is not None:
+        resp.set_cookie('min_price', str(min_price_val), max_age=60*60*24*30)
+    if max_price_val is not None:
+        resp.set_cookie('max_price', str(max_price_val), max_age=60*60*24*30)
+
+    return resp
+
+@lab3.route('/lab3//products/clear', methods=['GET'])
+def clear_filter():
+    resp = make_response(redirect('/lab3/products'))
+    resp.set_cookie('min_price', '', max_age=0)
+    resp.set_cookie('max_price', '', max_age=0)
+    return resp
