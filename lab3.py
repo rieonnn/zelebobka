@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, make_response, redirect
-lab3 = Blueprint('lab3', __name__)
+lab3 = Blueprint('lab3', __name__, template_folder='templates')
 
 @lab3.route('/lab3/')
 def lab():
@@ -128,3 +128,72 @@ def settings():
     resp.data = resp.data.decode('utf-8').replace('</head>', style + '</head>')
 
     return resp
+
+@lab3.route('/lab3/train_ticket', methods=['GET'])
+def train_ticket_form():
+    return render_template('lab3/train_ticket_form.html', errors={})
+
+
+@lab3.route('/lab3/train_ticket/result', methods=['POST'])
+def train_ticket_result():
+    fio = request.form.get('fio', '').strip()
+    shelf = request.form.get('shelf')
+    linen = request.form.get('linen') == 'on'
+    baggage = request.form.get('baggage') == 'on'
+    insurance = request.form.get('insurance') == 'on'
+    age = request.form.get('age', '').strip()
+    from_city = request.form.get('from_city', '').strip()
+    to_city = request.form.get('to_city', '').strip()
+    date = request.form.get('date', '').strip()
+
+    errors = {}
+
+    # Проверка на пустые поля
+    if not fio:
+        errors['fio'] = 'Введите ФИО'
+    if not shelf:
+        errors['shelf'] = 'Выберите полку'
+    if not age:
+        errors['age'] = 'Введите возраст'
+    if not from_city:
+        errors['from_city'] = 'Укажите пункт выезда'
+    if not to_city:
+        errors['to_city'] = 'Укажите пункт назначения'
+    if not date:
+        errors['date'] = 'Выберите дату поездки'
+
+    # Проверка возраста
+    try:
+        age = int(age)
+        if not (1 <= age <= 120):
+            errors['age'] = 'Возраст должен быть от 1 до 120 лет'
+    except ValueError:
+        errors['age'] = 'Возраст должен быть числом'
+
+    # Если есть ошибки — вернуть форму
+    if errors:
+        return render_template(
+            'lab3/train_ticket_form.html',
+            errors=errors,
+            fio=fio, shelf=shelf, linen=linen, baggage=baggage,
+            insurance=insurance, age=age, from_city=from_city,
+            to_city=to_city, date=date
+        )
+
+    # Расчет стоимости
+    price = 700 if age < 18 else 1000
+    if shelf in ['нижняя', 'нижняя боковая']:
+        price += 100
+    if linen:
+        price += 75
+    if baggage:
+        price += 250
+    if insurance:
+        price += 150
+
+    return render_template(
+        'lab3/train_ticket_result.html',
+        fio=fio, shelf=shelf, linen=linen, baggage=baggage,
+        insurance=insurance, age=age, from_city=from_city,
+        to_city=to_city, date=date, price=price, is_child=(age < 18)
+    )

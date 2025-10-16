@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+<h2 style="text-align:center; margin-bottom: 20px;">Оформление железнодорожного билета</h2>
+
+<form action="/lab3/train_ticket/result" method="post" style="max-width: 500px; margin: auto; padding: 20px;
+                                                              border: 1px solid #ccc; border-radius: 10px;
+                                                              background-color: #f9f9f9; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+
+    <div style="margin-bottom: 15px;">
+        <label for="fio"><strong>ФИО пассажира:</strong></label><br>
+        <input id="fio" type="text" name="fio" value="{{ fio or '' }}" style="width: 100%; padding: 8px;
+                                                                              border-radius: 5px; border: 1px solid #ccc;">
+        <div style="color:red; font-size: 0.9em;">{{ errors.fio }}</div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="age"><strong>Возраст:</strong></label><br>
+        <input id="age" type="number" name="age" min="1" max="120" value="{{ age or '' }}" style="width: 100%;
+                                                                                                  padding: 8px; border-radius: 5px;
+                                                                                                  border: 1px solid #ccc;">
+        <div style="color:red; font-size: 0.9em;">{{ errors.age }}</div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="shelf"><strong>Полка:</strong></label><br>
+        <select id="shelf" name="shelf" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="">-- выберите --</option>
+            <option value="нижняя" {% if shelf == 'нижняя' %}selected{% endif %}>нижняя</option>
+            <option value="верхняя" {% if shelf == 'верхняя' %}selected{% endif %}>верхняя</option>
+            <option value="нижняя боковая" {% if shelf == 'нижняя боковая' %}selected{% endif %}>нижняя боковая</option>
+            <option value="верхняя боковая" {% if shelf == 'верхняя боковая' %}selected{% endif %}>верхняя боковая</option>
+        </select>
+        <div style="color:red; font-size: 0.9em;">{{ errors.shelf }}</div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label><input type="checkbox" name="linen" {% if linen %}checked{% endif %}> С бельём</label><br>
+        <label><input type="checkbox" name="baggage" {% if baggage %}checked{% endif %}> С багажом</label><br>
+        <label><input type="checkbox" name="insurance" {% if insurance %}checked{% endif %}> Нужна страховка</label>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="from_city"><strong>Пункт выезда:</strong></label><br>
+        <input id="from_city" type="text" name="from_city" value="{{ from_city or '' }}" style="width: 100%; padding: 8px;
+                                                                                                border-radius: 5px; border: 1px solid #ccc;">
+        <div style="color:red; font-size: 0.9em;">{{ errors.from_city }}</div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label for="to_city"><strong>Пункт назначения:</strong></label><br>
+        <input id="to_city" type="text" name="to_city" value="{{ to_city or '' }}" style="width: 100%; padding: 8px;
+                                                                                          border-radius: 5px; border: 1px solid #ccc;">
+        <div style="color:red; font-size: 0.9em;">{{ errors.to_city }}</div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label for="date"><strong>Дата поездки:</strong></label><br>
+        <input id="date" type="date" name="date" value="{{ date or '' }}" style="width: 100%; padding: 8px; border-radius: 5px;
+                                                                                border: 1px solid #ccc;">
+        <div style="color:red; font-size: 0.9em;">{{ errors.date }}</div>
+    </div>
+
+    <div style="text-align:center;">
+        <button type="submit" style="padding: 10px 20px; background-color: #301404; color: white; border:none; border-radius: 5px; cursor:pointer;">Оформить билет</button>
+    </div>
+
+</form>
+{% endblock %}

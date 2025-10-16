@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+<div style="max-width: 600px; margin: 30px auto; padding: 25px; border: 1px solid #ccc; border-radius: 10px;
+            background-color:#fdfdfd; box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-family: Cournier New;">
+
+    <h2 style="text-align:center; margin-bottom: 20px;">Ваш билет</h2>
+
+    <div style="margin-bottom: 15px;">
+        <p><strong>Пассажир:</strong> {{ fio }}</p>
+        <p><strong>Возраст:</strong> {{ age }}</p>
+        {% if is_child %}
+            <p><em style="color:darkgreen;">Детский билет</em></p>
+        {% endif %}
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <p><strong>Маршрут:</strong> {{ from_city }} → {{ to_city }}</p>
+        <p><strong>Дата поездки:</strong> {{ date }}</p>
+        <p><strong>Полка:</strong> {{ shelf }}</p>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <p><strong>С бельём:</strong> {{ 'Да' if linen else 'Нет' }}</p>
+        <p><strong>С багажом:</strong> {{ 'Да' if baggage else 'Нет' }}</p>
+        <p><strong>Страховка:</strong> {{ 'Да' if insurance else 'Нет' }}</p>
+    </div>
+
+    <hr style="margin: 20px 0; border-color: #ddd;">
+
+    <h3 style="text-align:center; color:#822404;">Итоговая стоимость: {{ price }} руб.</h3>
+
+    <div style="text-align:center; margin-top: 20px;">
+        <a href="/lab3/train_ticket" style="text-decoration:none; color:#4d3f24; font-weight:bold;">← Вернуться к форме</a>
+    </div>
+
+</div>
+{% endblock %}
