@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
-{# номер лабораторной работы: #}
 {% block lab %}Лабораторная работа 3{% endblock %}
 
-{# основной контент: #}
 {% block main %}
     <h1>Настройки стилей</h1>
     <form method="get">
@@ -41,4 +39,11 @@
             <button type="submit">Применить настройки</button>
         </div>
     </form>
+
+    <!-- Кнопка для очистки всех настроек -->
+    <div style="margin-top: 20px;">
+        <a href="/lab3/settings/clear" style="display:inline-block;
+                                              padding:10px 20px; background-color:#5d0606;
+                                              color:white; text-decoration:none; border-radius:5px;">Очистить все настройки</a>
+    </div>
 {% endblock %}

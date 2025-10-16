@@ -129,6 +129,15 @@ def settings():
 
     return resp
 
+@lab3.route('/lab3/settings/clear')
+def clear_settings_cookies():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.set_cookie('color', '', max_age=0)
+    resp.set_cookie('bg_color', '', max_age=0)
+    resp.set_cookie('font_size', '', max_age=0)
+    resp.set_cookie('font_style', '', max_age=0)
+    return resp
+
 @lab3.route('/lab3/train_ticket', methods=['GET'])
 def train_ticket_form():
     return render_template('lab3/train_ticket_form.html', errors={})
