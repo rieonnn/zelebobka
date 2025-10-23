@@ -110,8 +110,12 @@ def tree():
     operation = request.form.get('operation')
 
     if operation == 'cut':
-        tree_count -= 1
+        # Проверка, чтобы счетчик не ушел в отрицательную область
+        if tree_count > 0:
+            tree_count -= 1
     elif operation == 'plant':
-        tree_count += 1
+        # Максимальное количество деревьев - 10
+        if tree_count < 10:
+            tree_count += 1
 
     return redirect('/lab4/tree')
