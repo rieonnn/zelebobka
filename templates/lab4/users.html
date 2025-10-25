@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+    <h1>Список пользователей</h1>
+
+    <div style="margin-bottom: 20px;">
+        <form action="/lab4/edit_profile" method="get" style="display: inline;">
+            <button type="submit" style="padding: 10px 20px; background: #50667d;
+                                         color: white; border: none; border-radius: 4px;
+                                         cursor: pointer; margin-right: 10px;">Редактировать мои данные</button>
+        </form>
+
+        <form action="/lab4/delete_profile" method="post" style="display: inline;"
+              onsubmit="return confirm('Вы уверены, что хотите удалить свой профиль?');">
+            <button type="submit" style="padding: 10px 20px; background: rgb(91, 6, 6);
+                                         color: white; border: none; border-radius: 4px; cursor: pointer;">Удалить мой профиль</button>
+        </form>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #ddd; padding: 12px; background: #f4f4f4; text-align: left;">Имя</th>
+                <th style="border: 1px solid #ddd; padding: 12px; background: #f4f4f4; text-align: left;">Логин</th>
+                <th style="border: 1px solid #ddd; padding: 12px; background: #f4f4f4; text-align: left;">Пол</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ user.name }}</td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ user.login }}</td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ user.gender }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+        <a href="/lab4/login" style="color: #007bff; text-decoration: none;">Назад</a>
+    </div>
+{% endblock %}

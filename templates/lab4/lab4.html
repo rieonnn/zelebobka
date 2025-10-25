@@ -8,7 +8,6 @@
     <h1>Формы (POST)</h1>
     <div>Тема лабораторной - Формы (POST). Список сделанных страниц: </div>
         <ol>
-            <h2>Арифметические операции</h2>
             <li>
                 <a href="/lab4/div-form">Деление</a>
             </li>
@@ -44,5 +43,38 @@
             <li>
                 <a href="/lab4/grain">Заказ зерна</a>
             </li>
+
+            <li>
+                <a href="/lab4/register">Регистрация</a>
+            </li>
+
+            <li>
+                <a href="/lab4/users">Список пользователей</a> (только для авторизованных)
+            </li>
         </ol>
+
+        {% if session.get('login') %}
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+            <strong>Вы авторизованы как:</strong>
+            {% for user in users %}
+                {% if user.login == session.login %}
+                    {{ user.name }} ({{ user.login }})
+                {% endif %}
+            {% endfor %}
+            <form action="/lab4/logout" method="post" style="display: inline; margin-left: 15px;">
+                <button type="submit" style="padding: 5px 10px; background: rgb(91, 6, 6);
+                                             color: white; border: none; border-radius: 3px;
+                                             cursor: pointer;">Выйти</button>
+            </form>
+        </div>
+    {% else %}
+        <div style="margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 5px;">
+            <strong>Статус:</strong> Не авторизован
+            <a href="/lab4/login" style="margin-left: 15px; padding: 5px 10px;
+                                         background: #6e8aa7; color: white;
+                                         text-decoration: none; border-radius: 3px;">Войти</a>
+            <a href="/lab4/register" style="margin-left: 10px; padding: 5px 10px; background: #28a745;
+                                            color: white; text-decoration: none; border-radius: 3px;">Зарегистрироваться</a>
+        </div>
+    {% endif %}
 {% endblock %}

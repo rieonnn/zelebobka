@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 4{% endblock %}
+
+{% block main %}
+    <h1>Редактирование профиля</h1>
+
+    {% if errors %}
+        <div style="margin-bottom: 20px;">
+            {% for error in errors %}
+                <div style="color: rgb(91, 6, 6); font-weight: bold; margin: 10px 0; padding: 10px;
+                            background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        <div style="margin-bottom: 15px;">
+            <label for="login" style="display: inline-block; width: 200px;">Логин:</label>
+            <input type="text" id="login" name="login" value="{{ user.login }}" required style="padding: 8px; width: 250px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: inline-block; width: 200px;">Имя:</label>
+            <input type="text" id="name" name="name" value="{{ user.name }}" required style="padding: 8px; width: 250px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="password" style="display: inline-block; width: 200px;">Новый пароль (оставьте пустым, если не хотите менять):</label>
+            <input type="password" id="password" name="password" style="padding: 8px; width: 250px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="password_confirm" style="display: inline-block; width: 200px;">Подтверждение нового пароля:</label>
+            <input type="password" id="password_confirm" name="password_confirm" style="padding: 8px; width: 250px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display: inline-block; width: 200px; vertical-align: top;">Пол:</label>
+            <div style="display: inline-block;">
+                <input type="radio" id="male" name="gender" value="мужской" {{ 'checked' if user.gender == 'мужской' }}>
+                <label for="male" style="margin-right: 15px;">Мужской</label>
+
+                <input type="radio" id="female" name="gender" value="женский" {{ 'checked' if user.gender == 'женский' }}>
+                <label for="female">Женский</label>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" style="padding: 10px 20px; background: #28a745;
+                                         color: white; border: none; border-radius: 4px;
+                                         cursor: pointer; margin-right: 10px;">Сохранить изменения</button>
+            <button type="reset" style="padding: 10px 20px; background: #6c757d;
+                                        color: white; border: none; border-radius: 4px;
+                                        cursor: pointer; margin-right: 10px;">Сбросить</button>
+            <a href="/lab4/users" style="color: #007bff; text-decoration: none;">Отмена</a>
+        </div>
+    </form>
+{% endblock %}
