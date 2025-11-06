@@ -1,0 +1,99 @@
+.lab5-container {
+    font-family: 'Courier New', monospace;
+    background: #f8fafc;
+    color: #334155;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.lab5-header {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.lab5-header h1 {
+    color: #1e293b;
+    margin-bottom: 8px;
+    font-size: 2em;
+}
+
+.lab5-nav-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.lab5-nav-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.lab5-nav-links a {
+    text-decoration: none;
+    color: #475569;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+    background: white;
+}
+
+.lab5-nav-links a:hover {
+    background: #c1b44f;
+    color: white;
+    border-color: #c1b44f;
+    transform: translateY(-2px);
+}
+
+.lab5-username {
+    font-family: 'Impact', monospace;
+    color: #475569;
+    font-weight: 500;
+    background: #f1f5f9;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.lab5-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.lab5-content h2 {
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+
+.lab5-content p {
+    color: #64748b;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .lab5-nav-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .lab5-nav-links {
+        justify-content: center;
+    }
+
+    .lab5-username {
+        text-align: center;
+        margin-top: 10px;
+    }
+}
