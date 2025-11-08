@@ -17,8 +17,12 @@
             <a href="{{ url_for('lab5.list_articles') }}">Список статей</a>
             <a href="{{ url_for('lab5.create_article') }}">Создать статью</a>
         </div>
-        <div class="lab5-username">
-            {{ username }}
+         <div class="lab5-username">
+            {% if login %}
+                {{ login }}
+            {% else %}
+                Anonymous
+            {% endif %}
         </div>
     </nav>
 
