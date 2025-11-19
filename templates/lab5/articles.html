@@ -1,9 +1,33 @@
 {% extends "base.html" %}
 {% block lab %}Лабораторная работа 5{% endblock %}
 {% block main %}
-    <h1>Статьи</h1>
-    {% for article in articles %}
-    <h2>{{ article['title'] }}</h2>
-    <blockquote>{{ article['article_text'] }}</blockquote>
-    {% endfor %}
+<link rel="stylesheet" href="{{ url_for('static', filename='lab5/lab5.css') }}">
+
+<div class="lab5-container">
+    <h1>Мои статьи</h1>
+
+    {% if not articles %}
+        <div class="no-articles">
+            <p>У вас пока нет ни одной статьи.</p>
+            <a href="{{ url_for('lab5.create_article') }}" class="btn">Создать первую статью</a>
+        </div>
+    {% else %}
+        <div class="articles-list">
+            {% for article in articles %}
+            <div class="article-card">
+                <div class="article-header">
+                    <h2>{{ article['title'] }}</h2>
+                    <div class="article-actions">
+                        <a href="{{ url_for('lab5.edit_article', article_id=article['id']) }}" class="btn-edit">✏️ Редактировать</a>
+                        <a href="{{ url_for('lab5.delete_article', article_id=article['id']) }}" class="btn-delete" onclick="return confirm('Удалить статью?')">🗑️ Удалить</a>
+                    </div>
+                </div>
+                <div class="article-content">
+                    {{ article['article_text'] }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
