@@ -257,3 +257,36 @@
     border: 1px solid #fecaca;
     margin-bottom: 24px;
 }
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.user-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    gap: 20px;
+}
+
+.user-login {
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.user-name {
+    color: #475569;
+}
+
+.profile-form {
+    max-width: 400px;
+}
+
+.article-card.favorite {
+    border-left: 4px solid #c1b44f;
+    background: #fffdf0;
+}

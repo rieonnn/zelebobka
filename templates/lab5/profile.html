@@ -1,43 +1,41 @@
 {% extends "base.html" %}
-
 {% block lab %}Лабораторная работа 5{% endblock %}
-
 {% block main %}
 <link rel="stylesheet" href="{{ url_for('static', filename='lab5/lab5.css') }}">
 
 <div class="lab5-container">
-    <h1>Редактирование статьи</h1>
+    <h1>Редактирование профиля</h1>
 
     {% if error %}
         <div class="error-message">{{ error }}</div>
     {% endif %}
 
-    <form method="post" class="article-form">
+    <form method="post" class="profile-form">
         <div class="form-group">
             <label>
-                Название статьи:
-                <input type="text" name="title" value="{{ article['title'] }}" maxlength="50" required>
+                Логин:
+                <input type="text" value="{{ user['login'] }}" disabled>
             </label>
         </div>
 
         <div class="form-group">
             <label>
-                Текст статьи:
-                <textarea name="article_text" required>{{ article['article_text'] }}</textarea>
+                Полное имя:
+                <input type="text" name="full_name" value="{{ user['full_name'] }}" required>
             </label>
         </div>
 
         <div class="form-group">
             <label>
-                <input type="checkbox" name="is_favorite" {% if article['is_favorite'] %}checked{% endif %}>
-                Добавить в избранное
+                Новый пароль (оставьте пустым, если не хотите менять):
+                <input type="password" name="password">
             </label>
         </div>
 
         <div class="form-group">
             <label>
-                <input type="checkbox" name="is_public" {% if article['is_public'] %}checked{% endif %}>
-                Сделать публичной
+                Подтверждение пароля:
+                <input type="password" name="confirm_password">
             </label>
         </div>
 

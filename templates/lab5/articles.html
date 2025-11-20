@@ -4,23 +4,31 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='lab5/lab5.css') }}">
 
 <div class="lab5-container">
-    <h1>Мои статьи</h1>
+    <h1>{% if login %}Мои статьи{% else %}Публичные статьи{% endif %}</h1>
 
     {% if not articles %}
         <div class="no-articles">
-            <p>У вас пока нет ни одной статьи.</p>
+            <p>{% if login %}У вас пока нет ни одной статьи.{% else %}Публичных статей пока нет.{% endif %}</p>
+            {% if login %}
             <a href="{{ url_for('lab5.create_article') }}" class="btn">Создать первую статью</a>
+            {% endif %}
         </div>
     {% else %}
         <div class="articles-list">
             {% for article in articles %}
-            <div class="article-card">
+            <div class="article-card {% if article['is_favorite'] %}favorite{% endif %}">
                 <div class="article-header">
-                    <h2>{{ article['title'] }}</h2>
+                    <h2>
+                        {{ article['title'] }}
+                        {% if article['is_favorite'] %} ⭐{% endif %}
+                        {% if article['is_public'] %} 🌐{% endif %}
+                    </h2>
+                    {% if login and user_id and article['user_id'] == user_id %}
                     <div class="article-actions">
-                        <a href="{{ url_for('lab5.edit_article', article_id=article['id']) }}" class="btn-edit">✏️ Редактировать</a>
-                        <a href="{{ url_for('lab5.delete_article', article_id=article['id']) }}" class="btn-delete" onclick="return confirm('Удалить статью?')">🗑️ Удалить</a>
+                        <a href="{{ url_for('lab5.edit_article', article_id=article['id']) }}" class="btn-edit">✏️</a>
+                        <a href="{{ url_for('lab5.delete_article', article_id=article['id']) }}" class="btn-delete" onclick="return confirm('Удалить статью?')">🗑️</a>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="article-content">
                     {{ article['article_text'] }}
