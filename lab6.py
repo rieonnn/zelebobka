@@ -4,7 +4,9 @@ from flask import Blueprint, render_template, request, session
 lab6_bp = Blueprint('lab6', __name__, template_folder='templates')
 
 # Создаём список офисов
-offices = [{"number": i, "tenant": ""} for i in range(1, 11)]
+offices = []
+for i in range(1, 11):
+    offices.append({"number": i, "tenant": "", "price": 900 + i*3})
 
 
 @lab6_bp.route('/lab6/')
