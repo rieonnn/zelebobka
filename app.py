@@ -1,25 +1,26 @@
 from flask import Flask, request
 import datetime
 import os
+
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
 from lab4 import lab4
 from lab5 import lab5
-from lab6 import lab6
-
+from lab6 import lab6_bp   # исправлено!
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'секретно-секретный-секрет')
 app.config['DB_TYPE'] = os.environ.get('DB_TYPE', 'postgres')
 
+# регистрация blueprints
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
 app.register_blueprint(lab4)
 app.register_blueprint(lab5)
-app.register_blueprint(lab6)
+app.register_blueprint(lab6_bp)   # исправлено!
 
 error_log = []
 
@@ -63,13 +64,10 @@ def not_found(err):
     ip = request.remote_addr
     url = request.url
 
-    # добавляем запись в лог
     error_log.append(f"[{time}], пользователь {ip} зашёл на адрес: {url}")
 
-    # формируем html для журнала
     log_html = "<h3>Журнал:</h3><ul>"
     for entry in error_log:
-        # выделим ссылку <i>курсивом</i>
         parts = entry.split("адрес:")
         log_html += f"<li>{parts[0]} зашёл на адрес: <i>{parts[1].strip()}</i></li>"
     log_html += "</ul>"
@@ -114,7 +112,6 @@ def not_found(err):
 ''', 404
 
 
-# Перехватчик ошибки 500
 @app.errorhandler(500)
 def internal_error(err):
     return '''
