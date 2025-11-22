@@ -15,14 +15,14 @@ def lab():
 @lab6_bp.route('/lab6/json-rpc-api/', methods=['POST'])
 def api():
     data = request.json
-    request_id = data.get('id')
+    id = data.get('id')
 
     # Метод info — вернуть список офисов
     if data['method'] == 'info':
         return {
             'jsonrpc': '2.0',
             'result': offices,
-            'id': request_id
+            'id': id
         }
 
     # Метод booking — забронировать офис
@@ -33,7 +33,7 @@ def api():
             return {
                 'jsonrpc': '2.0',
                 'error': {'code': 1, 'message': 'Unauthorized'},
-                'id': request_id
+                'id': id
             }
 
         office_number = data.get('params')
@@ -45,7 +45,7 @@ def api():
                     'code': -32602,
                     'message': 'Параметр params обязателен'
                 },
-                'id': request_id
+                'id': id
             }
 
         for office in offices:
@@ -57,14 +57,14 @@ def api():
                             'code': 2,
                             'message': 'Already booked'
                         },
-                        'id': request_id
+                        'id': id
                     }
 
                 office['tenant'] = login
                 return {
                     'jsonrpc': '2.0',
                     'result': 'success',
-                    'id': request_id
+                    'id': id
                 }
 
         return {
@@ -73,7 +73,67 @@ def api():
                 'code': -32602,
                 'message': f'Офис {office_number} не существует'
             },
-            'id': request_id
+            'id': id
+        }
+
+    elif data['method'] == 'cancellation':
+
+        login = session.get('login')
+        if not login:
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 1,
+                    'message': 'Unauthorized'
+                },
+                'id': id
+            }
+
+        office_number = data.get('params')
+        if office_number is None:
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': -32602,
+                    'message': 'Параметр params обязателен'
+                },
+                'id': id
+            }
+
+        for office in offices:
+            if office['number'] == office_number:
+                if office['tenant'] == '':
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 3,
+                            'message': 'Office is not booked'
+                        },
+                        'id': id
+                    }
+                if office['tenant'] != login:
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 4,
+                            'message': 'Cannot cancel someone else\'s booking'
+                        },
+                        'id': id
+                    }
+                office['tenant'] = ""
+                return {
+                    'jsonrpc': '2.0',
+                    'result': 'success',
+                    'id': id
+                }
+
+        return {
+            'jsonrpc': '2.0',
+            'error': {
+                'code': -32602,
+                'message': f'Офис {office_number} не существует'
+            },
+            'id': id
         }
 
     # Неизвестный метод
@@ -83,5 +143,5 @@ def api():
             'code': -32601,
             'message': 'Method not found'
         },
-        'id': request_id
+        'id': id
     }
