@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, g, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+import os
 import string
 
 # Создаем Blueprint для РГЗ
@@ -12,8 +13,74 @@ STUDENT_INFO = {
     'group': 'ФБИ-33'
 }
 
+def get_db_path():
+    """Определяем правильный путь к БД"""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, 'database.db')
+
+def init_db():
+    """Инициализация базы данных - вызывается автоматически при первом обращении"""
+    db_path = get_db_path()
+    db_exists = os.path.exists(db_path)
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    # Таблица пользователей
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            login TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            is_admin BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Таблица объявлений
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            author_id INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Создаем администратора, если его еще нет
+    cursor.execute('SELECT * FROM users WHERE login = ?', ('admin',))
+    admin_exists = cursor.fetchone()
+
+    if not admin_exists:
+        password_hash = generate_password_hash('admin123')
+        try:
+            cursor.execute('''
+                INSERT INTO users (login, password_hash, name, email, is_admin)
+                VALUES (?, ?, ?, ?, ?)
+            ''', ('admin', password_hash, 'Администратор', 'admin@example.com', True))
+            print("Создан администратор по умолчанию: admin / admin123")
+        except sqlite3.IntegrityError:
+            print("ℹАдминистратор уже существует")
+
+    conn.commit()
+    conn.close()
+
+    if not db_exists:
+        print("База данных успешно создана!")
+    else:
+        print("База данных подключена успешно")
+
 def get_db_connection():
-    conn = sqlite3.connect('database.db')
+    """Подключение к базе данных с автоматической инициализацией"""
+    # Инициализируем БД при первом подключении
+    init_db()
+
+    db_path = get_db_path()
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -33,22 +100,24 @@ def before_request():
 # Главная страница РГЗ - список всех объявлений
 @rgz_bp.route('/')
 def index():
-    conn = get_db_connection()
+    try:
+        conn = get_db_connection()
+        posts = conn.execute('''
+            SELECT p.*, u.name as author_name, u.email as author_email
+            FROM posts p
+            JOIN users u ON p.author_id = u.id
+            ORDER BY p.created_at DESC
+        ''').fetchall()
+        conn.close()
 
-    posts = conn.execute('''
-        SELECT p.*, u.name as author_name, u.email as author_email
-        FROM posts p
-        JOIN users u ON p.author_id = u.id
-        ORDER BY p.created_at DESC
-    ''').fetchall()
-
-    conn.close()
-
-    is_authenticated = 'user_id' in session
-    return render_template('rgz/index.html',
-                         posts=posts,
-                         is_authenticated=is_authenticated,
-                         student_info=STUDENT_INFO)
+        is_authenticated = 'user_id' in session
+        return render_template('rgz/index.html',
+                             posts=posts,
+                             is_authenticated=is_authenticated,
+                             student_info=STUDENT_INFO)
+    except Exception as e:
+        flash(f'Ошибка загрузки объявлений: {str(e)}', 'error')
+        return render_template('rgz/index.html', posts=[], is_authenticated=False, student_info=STUDENT_INFO)
 
 # Регистрация
 @rgz_bp.route('/register', methods=['GET', 'POST'])
@@ -359,26 +428,6 @@ def admin_delete_post(post_id):
     flash('Объявление удалено администратором', 'success')
     return redirect(url_for('rgz.admin_panel'))
 
-# Функция для создания администратора
-def create_admin():
-    """Создает администратора вручную"""
-    conn = get_db_connection()
-
-    # Проверяем, есть ли уже администратор
-    admin = conn.execute('SELECT * FROM users WHERE login = ?', ('admin',)).fetchone()
-
-    if not admin:
-        password_hash = generate_password_hash('admin123')
-        conn.execute('''
-            INSERT INTO users (login, password_hash, name, email, is_admin)
-            VALUES (?, ?, ?, ?, ?)
-        ''', ('admin', password_hash, 'Администратор', 'admin@example.com', True))
-        conn.commit()
-        print("Администратор создан: admin / admin123")
-    else:
-        print("ℹАдминистратор уже существует")
-
-    conn.close()
-
-if __name__ == '__main__':
-    create_admin()
+# Автоматически инициализируем БД при импорте этого модуля
+print("Инициализация базы данных RGZ...")
+init_db()
