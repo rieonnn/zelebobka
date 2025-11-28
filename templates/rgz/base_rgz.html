@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доска объявлений - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='rgz/style.css') }}">
+
+    <!-- Фавиконки -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='/lab2/favicon.ico') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                WEB-программирование, часть 2. {{ self.title() }}
+            </div>
+            <nav class="header-nav">
+                {% if session.user_id %}
+                    <!-- Ссылки для авторизованных пользователей -->
+                    <a href="{{ url_for('rgz.create_post') }}" class="nav-link">Создать объявление</a>
+                    <a href="{{ url_for('rgz.my_posts') }}" class="nav-link">Мои объявления</a>
+                    {% if session.is_admin %}
+                        <a href="{{ url_for('rgz.admin_panel') }}" class="nav-link admin-link">Админ-панель</a>
+                    {% endif %}
+                    <span class="user-greeting">Привет, {{ session.user_name }}!</span>
+                    <a href="{{ url_for('rgz.logout') }}" class="nav-link logout-link">Выйти</a>
+                {% else %}
+                    <!-- Ссылки для неавторизованных пользователей -->
+                    <a href="{{ url_for('rgz.login') }}" class="nav-link">Войти</a>
+                    <a href="{{ url_for('rgz.register') }}" class="nav-link">Регистрация</a>
+                {% endif %}
+                <!-- Ссылка на главное меню -->
+                <a href="{{ url_for('rgz.index') }}" class="nav-link main-menu-link">
+                    Главное меню
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- ФИО и группа студента -->
+        <div class="student-info">
+            <strong>Студент:</strong> {{ student_info.fio }} |
+            <strong>Группа:</strong> {{ student_info.group }}
+        </div>
+
+        <!-- Сообщения flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        &copy; {{ student_info.fio }}, {{ student_info.group }}, 2025
+    </footer>
+</body>
+</html>

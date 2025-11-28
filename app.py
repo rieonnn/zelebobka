@@ -10,6 +10,9 @@ from lab5 import lab5
 from lab6 import lab6_bp
 from lab7 import lab7
 
+
+from rgz import rgz_bp
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'секретно-секретный-секрет')
@@ -23,6 +26,7 @@ app.register_blueprint(lab4)
 app.register_blueprint(lab5)
 app.register_blueprint(lab6_bp)
 app.register_blueprint(lab7)
+app.register_blueprint(rgz_bp)
 
 error_log = []
 

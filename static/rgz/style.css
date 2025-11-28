@@ -1,0 +1,276 @@
+/* Общие стили для всей страницы */
+body {
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Заголовок */
+header {
+    background-color: #411811;
+    color: white;
+    padding: 15px;
+    font-size: 1.2em;
+    font-family: 'Georgia', serif;
+}
+
+header div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Навигация */
+nav a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #c1da77;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Основной блок */
+main {
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Футер */
+footer {
+    background-color: #231f1f;
+    color: #ddd;
+    text-align: right;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+}
+
+/* Контейнер */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Карточки */
+.card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    color: #411811;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.card-text {
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Кнопки */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 2px;
+    border: 1px solid #411811;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #411811;
+    background: white;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #411811;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #411811;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2a100b;
+    border-color: #2a100b;
+}
+
+.btn-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+
+/* Формы */
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 1em;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #411811;
+    box-shadow: 0 0 0 2px rgba(65, 24, 17, 0.2);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #411811;
+}
+
+.form-text {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: -8px;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Алерты */
+.alert {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+/* Таблицы */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #411811;
+    color: white;
+    font-weight: bold;
+}
+
+/* Бейджи */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.badge.bg-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Информация о студенте */
+.student-info {
+    background-color: #3a100e;
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    color: #f5f8f8;
+}
+
+/* Текст */
+.text-muted {
+    color: #6c757d !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #411811;
+    margin-top: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    header div {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+
+    .table {
+        font-size: 0.9em;
+    }
+}

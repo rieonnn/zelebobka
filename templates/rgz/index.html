@@ -1,0 +1,67 @@
+{% extends "rgz/base_rgz.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Доска объявлений</h1>
+
+    {% if not posts %}
+        <div class="alert alert-info">
+            <h3>Пока нет объявлений</h3>
+            <p>Чтобы начать пользоваться доской объявлений:</p>
+            <ol>
+                <li><a href="{{ url_for('rgz.register') }}">Зарегистрируйтесь</a> как новый пользователь</li>
+                <li>Или <a href="{{ url_for('rgz.login') }}">войдите</a> в систему</li>
+                <li>Создайте свое первое объявление!</li>
+            </ol>
+
+            {% if not session.user_id %}
+            <div style="margin-top: 15px;">
+                <a href="{{ url_for('rgz.register') }}" class="btn btn-primary">Зарегистрироваться</a>
+                <a href="{{ url_for('rgz.login') }}" class="btn">Войти</a>
+            </div>
+            {% else %}
+            <div style="margin-top: 15px;">
+                <a href="{{ url_for('rgz.create_post') }}" class="btn btn-primary">Создать первое объявление</a>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        {% for post in posts %}
+            <div class="card">
+                <div class="card-title">{{ post.title }}</div>
+                <div class="card-text">{{ post.content }}</div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <div>
+                        <small class="text-muted">
+                            Автор: {{ post.author_name }}
+                            {% if is_authenticated %}
+                                | Email: {{ post.author_email }}
+                            {% endif %}
+                            | {{ post.created_at[:16] }}
+                        </small>
+                    </div>
+
+                    {% if session.user_id and (session.user_id == post.author_id or session.is_admin) %}
+                        <div>
+                            {% if session.user_id == post.author_id %}
+                                <a href="{{ url_for('rgz.edit_post', post_id=post.id) }}" class="btn">Редактировать</a>
+                            {% endif %}
+                            <a href="{{ url_for('rgz.delete_post', post_id=post.id) }}" class="btn btn-danger"
+                               onclick="return confirm('Удалить это объявление?')">Удалить</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not session.user_id and posts %}
+        <div class="alert alert-warning">
+            <a href="{{ url_for('rgz.login') }}">Войдите</a> в систему, чтобы видеть email авторов и создавать свои объявления.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

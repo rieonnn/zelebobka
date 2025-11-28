@@ -1,0 +1,43 @@
+{% extends "rgz/base_rgz.html" %}
+
+{% block title %}Вход - Доска объявлений{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Вход в систему</h1>
+
+    <form method="POST" action="{{ url_for('rgz.login') }}">
+        <div style="max-width: 400px; margin: 0 auto;">
+            <div class="form-group">
+                <label for="login" class="form-label">Логин:</label>
+                <input type="text" class="form-control" id="login" name="login" required
+                       placeholder="Введите ваш логин">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль:</label>
+                <input type="password" class="form-control" id="password" name="password" required
+                       placeholder="Введите ваш пароль">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">
+                Войти
+            </button>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <small>Нет аккаунта? <a href="{{ url_for('rgz.register') }}">Зарегистрируйтесь</a></small>
+    </div>
+</div>
+
+<!-- для проверки отправки формы -->
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    console.log('Форма отправляется!');
+    const login = document.getElementById('login').value;
+    const password = document.getElementById('password').value;
+    console.log('Логин:', login, 'Пароль:', password);
+});
+</script>
+{% endblock %}
