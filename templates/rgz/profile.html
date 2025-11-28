@@ -1,0 +1,67 @@
+{% extends "rgz/base_rgz.html" %}
+
+{% block title %}Мой профиль - Доска объявлений{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Мой профиль</h1>
+
+    <div class="card">
+        <div class="card-title">Информация о пользователе</div>
+        <div class="card-text">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                {% if user.avatar %}
+                <img src="{{ user.avatar }}"
+                     alt="Аватар {{ user.name }}"
+                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #411811;">
+                {% else %}
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #411811; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                    {{ user.name[0]|upper }}
+                </div>
+                {% endif %}
+                <div>
+                    <h3 style="margin: 0; color: #411811;">{{ user.name }}</h3>
+                    <p style="margin: 5px 0; color: #666;">@{{ user.login }}</p>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <strong>Email:</strong> {{ user.email }}
+            </div>
+
+            {% if user.about_me %}
+            <div style="margin-bottom: 15px;">
+                <strong>О себе:</strong>
+                <p style="margin: 5px 0; padding: 10px; background-color: #f8f9fa; border-radius: 4px;">{{ user.about_me }}</p>
+            </div>
+            {% else %}
+            <div style="margin-bottom: 15px;">
+                <strong>О себе:</strong>
+                <p style="margin: 5px 0; color: #666; font-style: italic;">Не указано</p>
+            </div>
+            {% endif %}
+
+            <div style="margin-bottom: 15px;">
+                <strong>Дата регистрации:</strong> {{ user.created_at[:16] }}
+            </div>
+
+            <div>
+                <strong>Статус:</strong>
+                {% if user.is_admin %}
+                    <span class="badge bg-success">Администратор</span>
+                {% else %}
+                    <span class="badge bg-secondary">Пользователь</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-title">Действия</div>
+        <div style="display: flex; gap: 10px;">
+            <a href="{{ url_for('rgz.my_posts') }}" class="btn btn-primary">Мои объявления</a>
+            <a href="{{ url_for('rgz.create_post') }}" class="btn">Создать объявление</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

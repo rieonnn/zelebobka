@@ -34,14 +34,26 @@
                 <div class="card-text">{{ post.content }}</div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <div>
-                        <small class="text-muted">
-                            Автор: {{ post.author_name }}
-                            {% if is_authenticated %}
-                                | Email: {{ post.author_email }}
-                            {% endif %}
-                            | {{ post.created_at[:16] }}
-                        </small>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        {% if post.author_avatar %}
+                        <img src="{{ post.author_avatar }}"
+                             alt="Аватар {{ post.author_name }}"
+                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #411811;">
+                        {% else %}
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background-color: #411811; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold;">
+                            {{ post.author_name[0]|upper }}
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <small class="text-muted">
+                                <strong>{{ post.author_name }}</strong>
+                                {% if is_authenticated %}
+                                    | Email: {{ post.author_email }}
+                                {% endif %}
+                                | {{ post.created_at[:16] }}
+                            </small>
+                        </div>
                     </div>
 
                     {% if session.user_id and (session.user_id == post.author_id or session.is_admin) %}

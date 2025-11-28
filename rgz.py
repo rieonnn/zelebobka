@@ -26,7 +26,7 @@ def init_db():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # Таблица пользователей
+    # Таблица пользователей - ДОБАВЛЯЕМ ПОЛЯ ДЛЯ АВАТАРКИ И "О СЕБЕ"
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,6 +34,8 @@ def init_db():
             password_hash TEXT NOT NULL,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
+            avatar TEXT,                    -- НОВОЕ: аватарка (URL)
+            about_me TEXT,                  -- НОВОЕ: о себе (необязательное)
             is_admin BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -93,6 +95,12 @@ def is_valid_username_password(text):
 def is_valid_email(email):
     return '@' in email and '.' in email and len(email) > 5
 
+# Валидация URL для аватарки
+def is_valid_avatar_url(url):
+    if not url:  # Пустая строка - допустимо
+        return True
+    return url.startswith(('http://', 'https://'))
+
 @rgz_bp.before_request
 def before_request():
     g.student_info = STUDENT_INFO
@@ -102,8 +110,9 @@ def before_request():
 def index():
     try:
         conn = get_db_connection()
+        # выборка аватарки
         posts = conn.execute('''
-            SELECT p.*, u.name as author_name, u.email as author_email
+            SELECT p.*, u.name as author_name, u.email as author_email, u.avatar as author_avatar
             FROM posts p
             JOIN users u ON p.author_id = u.id
             ORDER BY p.created_at DESC
@@ -128,6 +137,8 @@ def register():
         confirm_password = request.form['confirm_password']
         name = request.form['name'].strip()
         email = request.form['email'].strip()
+        avatar = request.form.get('avatar', '').strip()
+        about_me = request.form.get('about_me', '').strip()
 
         # Валидация
         errors = []
@@ -149,6 +160,10 @@ def register():
         if not is_valid_email(email):
             errors.append('Некорректный email адрес')
 
+        # Валидация аватарки (если указана)
+        if avatar and not is_valid_avatar_url(avatar):
+            errors.append('Аватарка должна быть валидным URL-адресом (начинаться с http:// или https://)')
+
         if errors:
             for error in errors:
                 flash(error, 'error')
@@ -160,9 +175,9 @@ def register():
 
         try:
             conn.execute('''
-                INSERT INTO users (login, password_hash, name, email)
-                VALUES (?, ?, ?, ?)
-            ''', (login, password_hash, name, email))
+                INSERT INTO users (login, password_hash, name, email, avatar, about_me)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (login, password_hash, name, email, avatar, about_me))
             conn.commit()
             flash('Регистрация успешна! Теперь вы можете войти.', 'success')
             return redirect(url_for('rgz.login'))
@@ -198,6 +213,9 @@ def login():
             session['user_login'] = user['login']
             session['user_name'] = user['name']
             session['is_admin'] = bool(user['is_admin'])
+            # Сохраняем дополнительные данные в сессии
+            session['user_avatar'] = user['avatar']
+            session['user_about_me'] = user['about_me']
             flash(f'Добро пожаловать, {user["name"]}!', 'success')
             return redirect(url_for('rgz.index'))
         else:
@@ -211,6 +229,21 @@ def logout():
     session.clear()
     flash('Вы вышли из системы', 'info')
     return redirect(url_for('rgz.index'))
+
+# Профиль пользователя
+@rgz_bp.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        flash('Необходимо войти в систему', 'error')
+        return redirect(url_for('rgz.login'))
+
+    conn = get_db_connection()
+    user = conn.execute(
+        'SELECT * FROM users WHERE id = ?', (session['user_id'],)
+    ).fetchone()
+    conn.close()
+
+    return render_template('rgz/profile.html', user=user, student_info=STUDENT_INFO)
 
 # Создание объявления
 @rgz_bp.route('/create', methods=['GET', 'POST'])

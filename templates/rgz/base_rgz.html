@@ -22,6 +22,7 @@
                     <!-- Ссылки для авторизованных пользователей -->
                     <a href="{{ url_for('rgz.create_post') }}" class="nav-link">Создать объявление</a>
                     <a href="{{ url_for('rgz.my_posts') }}" class="nav-link">Мои объявления</a>
+                    <a href="{{ url_for('rgz.profile') }}" class="nav-link">Мой профиль</a>
                     {% if session.is_admin %}
                         <a href="{{ url_for('rgz.admin_panel') }}" class="nav-link admin-link">Админ-панель</a>
                     {% endif %}
