@@ -10,12 +10,18 @@ function fillFilmList() {
             let tr = document.createElement('tr');
 
             let tdTitle = document.createElement('td');
-            let tdTitleRus = document.createElement('td');
             let tdYear = document.createElement('td');
             let tdActions = document.createElement('td');
 
-            tdTitle.innerText = films[i].title == films[i].title_ru ? '' : films[i].title;
-            tdTitleRus.innerText = films[i].title_ru;
+            // Форматируем название: русское название основное, оригинальное в скобках курсивом
+            let titleHTML = films[i].title_ru;
+
+            // Если оригинальное название отличается от русского, добавляем его
+            if (films[i].title && films[i].title !== films[i].title_ru) {
+                titleHTML += ' <span style="font-style: italic; color: #666;">(' + films[i].title + ')</span>';
+            }
+
+            tdTitle.innerHTML = titleHTML;
             tdYear.innerText = films[i].year;
 
             let editButton = document.createElement('button');
@@ -34,7 +40,6 @@ function fillFilmList() {
             tdActions.append(delButton);
 
             tr.append(tdTitle);
-            tr.append(tdTitleRus);
             tr.append(tdYear);
             tr.append(tdActions);
 
