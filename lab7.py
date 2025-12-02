@@ -80,10 +80,17 @@ def del_film(id):
 def put_film(id):
     if 0 <= id < len(films):
         film = request.get_json()
-        if film['description'] == '':
-            return {'description': 'Заполните описание'}, 400
+
+        # Проверка описания
+        if film.get('description') is None or film['description'].strip() == '':
+            return jsonify({'description': 'Заполните описание'}), 400
+
+        # Если оригинальное название пустое, а русское задано - копируем русское
+        if (not film.get('title') or film['title'].strip() == '') and film.get('title_ru'):
+            film['title'] = film['title_ru']
+
         films[id] = film
-        return films[id]
+        return jsonify(films[id])
     abort(404)
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
@@ -93,6 +100,10 @@ def add_film():
     # Проверка описания для POST
     if film.get('description') is None or film['description'].strip() == '':
         return jsonify({'description': 'Заполните описание'}), 400
+
+    # Если оригинальное название пустое, а русское задано - копируем русское
+    if (not film.get('title') or film['title'].strip() == '') and film.get('title_ru'):
+        film['title'] = film['title_ru']
 
     films.append(film)
     return jsonify({"id": len(films) - 1})
