@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, abort
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -63,6 +63,8 @@ films = [
 def get_films():
     return films
 
-@lab7.route('/Lab7/rest-api/films/<int:id>', methods=['GET'])
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    return films[id]
+    if 0 <= id < len(films):
+        return films[id]
+    abort(404)
