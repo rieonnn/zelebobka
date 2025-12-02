@@ -75,3 +75,12 @@ def del_film(id):
         del films[id]
         return '', 204
     abort(404)  # проверка id и вызов 404
+
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
+def put_film(id):
+    if 0 <= id < len(films):
+        film = request.get_json()
+        films[id] = film
+        return films[id]
+    abort(404)
+    
