@@ -47,10 +47,12 @@ function showModal() {
     // Очищаем сообщение об ошибке при открытии модального окна
     document.getElementById('description-error').innerText = '';
     document.querySelector('div.modal').style.display = 'block';
+    document.querySelector('.modal-overlay').style.display = 'block';
 }
 
 function hideModal() {
     document.querySelector('div.modal').style.display = 'none';
+    document.querySelector('.modal-overlay').style.display = 'none';
 }
 
 function cancel() {

@@ -5,30 +5,154 @@
 {% block script %}
 <script src="{{ url_for('static', filename='lab7/main.js') }}"></script>
 <style>
+    /* Основные стили */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th {
+        background-color: #f8f9fa;
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+    }
+
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Стили для кнопок */
+    button {
+        padding: 8px 16px;
+        margin: 5px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    button[onclick="addFilm()"] {
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+
+    button[onclick="addFilm()"]:hover {
+        background-color: #0056b3;
+    }
+
+    button[onclick="sendFilm()"] {
+        background-color: #28a745;
+        color: white;
+    }
+
+    button[onclick="sendFilm()"]:hover {
+        background-color: #218838;
+    }
+
+    button[onclick="cancel()"] {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    button[onclick="cancel()"]:hover {
+        background-color: #545b62;
+    }
+
+    /* Кнопки действий в таблице */
+    button:not([onclick="addFilm()"]):not([onclick="sendFilm()"]):not([onclick="cancel()"]) {
+        background-color: #6c757d;
+        color: white;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    button:not([onclick="addFilm()"]):not([onclick="sendFilm()"]):not([onclick="cancel()"]):hover {
+        background-color: #545b62;
+    }
+
+    /* Модальное окно */
     .modal {
         display: none;
-        z-index: 100;
-        box-shadow: 3px 3px 5px black;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         background: white;
-        width: 400px;
+        width: 500px;
         left: 50%;
-        top: 220px;
-        margin-left: -200px;
-        position: absolute;
-        padding: 20px;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        position: fixed;
+        padding: 25px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
     }
+
+    .modal label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .modal input[type="text"],
+    .modal input[type="number"],
+    .modal textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .modal textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    .modal button {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    /* Сообщение об ошибке */
     .error-message {
-        color: red;
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    /* Фон затемнения для модального окна */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 999;
     }
 </style>
 {% endblock %}
 
 {% block main %}
     <h1>Список фильмов</h1>
+    <div class="modal-overlay" onclick="hideModal()"></div>
     <table>
         <thead>
             <tr>
-                <th colspan="2">Название</th>
+                <th>Название</th>
                 <th>Год</th>
                 <th>Действие</th>
             </tr>
@@ -49,22 +173,24 @@
     <label>
         Название фильма на русском:
         <input type="text" id="title_ru">
-    </label><br>
+    </label>
     <label>
         Название фильма на оригинальном языке
         <i>(если фильм русский, то оставьте пустым):</i>
         <input type="text" id="title">
-    </label><br>
+    </label>
     <label>
         Год выпуска:
         <input type="number" id="year">
-    </label><br>
+    </label>
     <label>
         Описание:
         <textarea id="description"></textarea>
         <div id="description-error" class="error-message"></div>
-    </label><br>
-    <button onclick="sendFilm()">OK</button>
-    <button onclick="cancel()">Отмена</button>
+    </label>
+    <div style="text-align: right;">
+        <button onclick="sendFilm()">OK</button>
+        <button onclick="cancel()">Отмена</button>
+    </div>
     </div>
 {% endblock %}
