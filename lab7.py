@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, abort, jsonify
+from datetime import datetime
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -81,12 +82,34 @@ def put_film(id):
     if 0 <= id < len(films):
         film = request.get_json()
 
-        # Проверка описания
-        if film.get('description') is None or film['description'].strip() == '':
-            return jsonify({'description': 'Заполните описание'}), 400
+        # Проверка 1: Русское название должно быть непустым
+        if not film.get('title_ru') or str(film['title_ru']).strip() == '':
+            return jsonify({'title_ru': 'Русское название обязательно'}), 400
 
-        # Если оригинальное название пустое, а русское задано - копируем русское
-        if (not film.get('title') or film['title'].strip() == '') and film.get('title_ru'):
+        # Проверка 2: Оригинальное название должно быть непустым, если русское пустое
+        # (но русское уже проверено выше, так что эта проверка всегда будет проходить)
+        if (not film.get('title') or str(film['title']).strip() == '') and \
+           (not film.get('title_ru') or str(film['title_ru']).strip() == ''):
+            return jsonify({'title': 'Хотя бы одно название должно быть заполнено'}), 400
+
+        # Проверка 3: Год должен быть от 1895 до текущего
+        current_year = datetime.now().year
+        try:
+            year = int(film.get('year', 0))
+            if year < 1895 or year > current_year:
+                return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'year': 'Некорректный год'}), 400
+
+        # Проверка 4: Описание должно быть непустым и не более 2000 символов
+        description = film.get('description', '')
+        if not description or str(description).strip() == '':
+            return jsonify({'description': 'Описание обязательно'}), 400
+        if len(str(description).strip()) > 2000:
+            return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
+
+        # Автозаполнение оригинального названия
+        if (not film.get('title') or str(film['title']).strip() == '') and film.get('title_ru'):
             film['title'] = film['title_ru']
 
         films[id] = film
@@ -97,12 +120,33 @@ def put_film(id):
 def add_film():
     film = request.get_json()
 
-    # Проверка описания для POST
-    if film.get('description') is None or film['description'].strip() == '':
-        return jsonify({'description': 'Заполните описание'}), 400
+    # Проверка 1: Русское название должно быть непустым
+    if not film.get('title_ru') or str(film['title_ru']).strip() == '':
+        return jsonify({'title_ru': 'Русское название обязательно'}), 400
 
-    # Если оригинальное название пустое, а русское задано - копируем русское
-    if (not film.get('title') or film['title'].strip() == '') and film.get('title_ru'):
+    # Проверка 2: Оригинальное название должно быть непустым, если русское пустое
+    if (not film.get('title') or str(film['title']).strip() == '') and \
+       (not film.get('title_ru') or str(film['title_ru']).strip() == ''):
+        return jsonify({'title': 'Хотя бы одно название должно быть заполнено'}), 400
+
+    # Проверка 3: Год должен быть от 1895 до текущего
+    current_year = datetime.now().year
+    try:
+        year = int(film.get('year', 0))
+        if year < 1895 or year > current_year:
+            return jsonify({'year': f'Год должен быть от 1895 до {current_year}'}), 400
+    except (ValueError, TypeError):
+        return jsonify({'year': 'Некорректный год'}), 400
+
+    # Проверка 4: Описание должно быть непустым и не более 2000 символов
+    description = film.get('description', '')
+    if not description or str(description).strip() == '':
+        return jsonify({'description': 'Описание обязательно'}), 400
+    if len(str(description).strip()) > 2000:
+        return jsonify({'description': 'Описание не должно превышать 2000 символов'}), 400
+
+    # Автозаполнение оригинального названия
+    if (not film.get('title') or str(film['title']).strip() == '') and film.get('title_ru'):
         film['title'] = film['title_ru']
 
     films.append(film)

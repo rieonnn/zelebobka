@@ -173,18 +173,21 @@
     <label>
         Название фильма на русском:
         <input type="text" id="title_ru">
+        <div id="title_ru-error" class="error-message"></div>
     </label>
     <label>
         Название фильма на оригинальном языке
         <i>(если фильм русский, то оставьте пустым):</i>
         <input type="text" id="title">
+        <div id="title-error" class="error-message"></div>
     </label>
     <label>
-        Год выпуска:
+        Год выпуска (от 1895 до текущего):
         <input type="number" id="year">
+        <div id="year-error" class="error-message"></div>
     </label>
     <label>
-        Описание:
+        Описание (максимум 2000 символов):
         <textarea id="description"></textarea>
         <div id="description-error" class="error-message"></div>
     </label>
@@ -192,5 +195,5 @@
         <button onclick="sendFilm()">OK</button>
         <button onclick="cancel()">Отмена</button>
     </div>
-    </div>
+</div>
 {% endblock %}
