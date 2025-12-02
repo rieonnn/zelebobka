@@ -34,8 +34,8 @@ def init_db():
             password_hash TEXT NOT NULL,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
-            avatar TEXT,                    -- НОВОЕ: аватарка (URL)
-            about_me TEXT,                  -- НОВОЕ: о себе (необязательное)
+            avatar TEXT,
+            about_me TEXT,
             is_admin BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -66,7 +66,7 @@ def init_db():
             ''', ('admin', password_hash, 'Администратор', 'admin@example.com', True))
             print("Создан администратор по умолчанию: admin / admin123")
         except sqlite3.IntegrityError:
-            print("ℹАдминистратор уже существует")
+            print("Администратор уже существует")
 
     conn.commit()
     conn.close()
