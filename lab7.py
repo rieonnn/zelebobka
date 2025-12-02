@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort, jsonify
 
 lab7 = Blueprint('lab7', __name__)
 
@@ -80,13 +80,19 @@ def del_film(id):
 def put_film(id):
     if 0 <= id < len(films):
         film = request.get_json()
+        if film['description'] == '':
+            return {'description': 'Заполните описание'}, 400
         films[id] = film
         return films[id]
     abort(404)
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
-    film = request.get_json()  # получаем данные нового фильма из тела запроса
-    films.append(film)         # добавляем фильм в конец списка
-    return {"id": len(films) - 1}  # возвращаем индекс нового элемента
+    film = request.get_json()
 
+    # Проверка описания для POST
+    if film.get('description') is None or film['description'].strip() == '':
+        return jsonify({'description': 'Заполните описание'}), 400
+
+    films.append(film)
+    return jsonify({"id": len(films) - 1})

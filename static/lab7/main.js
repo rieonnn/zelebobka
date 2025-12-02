@@ -44,6 +44,8 @@ function fillFilmList() {
 }
 
 function showModal() {
+    // Очищаем сообщение об ошибке при открытии модального окна
+    document.getElementById('description-error').innerText = '';
     document.querySelector('div.modal').style.display = 'block';
 }
 
@@ -61,6 +63,10 @@ function addFilm() {
     document.getElementById('title_ru').value = '';
     document.getElementById('year').value = '';
     document.getElementById('description').value = '';
+
+    // Очищаем сообщение об ошибке
+    document.getElementById('description-error').innerText = '';
+
     showModal();
 }
 
@@ -81,14 +87,25 @@ function sendFilm() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(film)
     })
-    .then(function() {
-        fillFilmList();
-        hideModal();
+    .then(function(resp) {
+        if(resp.ok) {
+            fillFilmList();
+            hideModal();
+            return {};
+        }
+        return resp.json();
+    })
+    .then(function(errors) {
+        if(errors.description)
+            document.getElementById('description-error').innerText = errors.description;
     });
 }
 
 
 function editFilm(id) {
+    // Очищаем сообщение об ошибке перед открытием
+    document.getElementById('description-error').innerText = '';
+
     fetch(`/lab7/rest-api/films/${id}`)
     .then(function(data) {
         return data.json();
