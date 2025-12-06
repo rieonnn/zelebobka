@@ -1,7 +1,7 @@
-# lab7.py (в той же папке что app.py)
+
 from flask import Blueprint, render_template, request, jsonify
 from datetime import datetime
-import db_films  
+import db_films
 
 lab7 = Blueprint('lab7', __name__)
 film_db = db_films.FilmDB()
