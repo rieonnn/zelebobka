@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block lab %}Создание статьи{% endblock %}
+{% block main %}
+    <h1>Создание новой статьи</h1>
+
+    {% if error %}
+        <div style="color: red; margin-bottom: 20px;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        <div>
+            <label>
+                Заголовок: <br>
+                <input type="text" name="title" value="{{ request.form.get('title', '') }}">
+            </label>
+        </div>
+        <div>
+            <label>
+                Текст статьи: <br>
+                <textarea name="article_text" rows="10">{{ request.form.get('article_text', '') }}</textarea>
+            </label>
+        </div>
+        <button type="submit">Создать статью</button>
+    </form>
+
+    <p><a href="/lab8/articles/">Вернуться к списку статей</a></p>
+{% endblock %}

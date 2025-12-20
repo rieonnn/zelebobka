@@ -12,9 +12,9 @@
 
     <nav class="lab8-nav-card">
         <div class="lab8-nav-links">
-            <a href="{{ url_for('lab8.articles') }}">Список статей</a>
+            <a href="{{ url_for('lab8.article_list') }}">Список статей</a>
             <a href="{{ url_for('lab8.create') }}">Создать статью</a>
-            {% if session.get('username') %}
+            {% if current_user.is_authenticated %}
                 <a href="{{ url_for('lab8.logout') }}" class="logout-btn">Выйти</a>
             {% else %}
                 <a href="{{ url_for('lab8.login') }}">Войти</a>
@@ -22,8 +22,8 @@
             {% endif %}
         </div>
         <div class="lab8-username">
-            {% if session.get('username') %}
-                {{ session.get('username') }}
+            {% if current_user.is_authenticated %}
+                {{ current_user.login }}
             {% else %}
                 anonymous
             {% endif %}
