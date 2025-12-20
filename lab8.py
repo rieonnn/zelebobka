@@ -89,32 +89,44 @@ def register():
     return redirect('/lab8/')
 
 @lab8.route('/lab8/articles/')
-@login_required  # ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
 def article_list():
-    # ПОЛУЧАЕМ СТАТЬИ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
-    user_articles = articles.query.filter_by(login_id=current_user.id).all()
-    return render_template('lab8/articles.html', articles=user_articles)
+    # Если пользователь авторизован, показываем его статьи + публичные статьи других пользователей
+    if current_user.is_authenticated:
+        # Статьи текущего пользователя
+        user_articles = articles.query.filter_by(login_id=current_user.id).all()
+        # Публичные статьи других пользователей
+        public_articles = articles.query.filter(
+            articles.is_public == True,
+            articles.login_id != current_user.id
+        ).all()
+        # Объединяем
+        all_articles = user_articles + public_articles
+    else:
+        # Для неавторизованных пользователей показываем только публичные статьи
+        all_articles = articles.query.filter_by(is_public=True).all()
+
+    return render_template('lab8/articles.html', articles=all_articles)
 
 @lab8.route('/lab8/create/', methods=['GET', 'POST'])
-@login_required  # ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
+@login_required
 def create():
     if request.method == 'GET':
         return render_template('lab8/create.html')
 
     title = request.form.get('title')
     article_text = request.form.get('article_text')
+    is_public = request.form.get('is_public') == 'on'  # Получаем значение чекбокса
 
     if not title or not article_text:
         return render_template('lab8/create.html',
                                error='Заголовок и текст статьи не могут быть пустыми')
 
-    # СОЗДАЕМ НОВУЮ СТАТЬЮ
     new_article = articles(
-        login_id=current_user.id,  # текущий пользователь
+        login_id=current_user.id,
         title=title,
         article_text=article_text,
         is_favorite=False,
-        is_public=False,
+        is_public=is_public,  # Сохраняем настройку публичности
         likes=0
     )
 
@@ -129,15 +141,13 @@ def logout():
     return redirect('/lab8/')
 
 @lab8.route('/lab8/articles/<int:article_id>/edit/', methods=['GET', 'POST'])
-@login_required  # ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ
+@login_required
 def edit_article(article_id):
-    # НАХОДИМ СТАТЬЮ
     article = articles.query.get(article_id)
 
     if not article:
         return "Статья не найдена", 404
 
-    # ПРОВЕРЯЕМ, ЧТО СТАТЬЯ ПРИНАДЛЕЖИТ ТЕКУЩЕМУ ПОЛЬЗОВАТЕЛЮ
     if article.login_id != current_user.id:
         return "Доступ запрещен", 403
 
@@ -146,15 +156,16 @@ def edit_article(article_id):
 
     title = request.form.get('title')
     article_text = request.form.get('article_text')
+    is_public = request.form.get('is_public') == 'on'
 
     if not title or not article_text:
         return render_template('lab8/edit_article.html',
                                article=article,
                                error='Заголовок и текст статьи не могут быть пустыми')
 
-    # ОБНОВЛЯЕМ СТАТЬЮ
     article.title = title
     article.article_text = article_text
+    article.is_public = is_public  # Обновляем публичность
 
     db.session.commit()
     return redirect('/lab8/articles/')

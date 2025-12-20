@@ -9,21 +9,28 @@
         </div>
     {% endif %}
 
-    <form method="post">
+    <form action="/lab8/create/" method="post">
         <div>
             <label>
                 Заголовок: <br>
-                <input type="text" name="title" value="{{ request.form.get('title', '') }}">
+                <input type="text" name="title" style="width: 300px;" value="{{ request.form.get('title', '') }}">
             </label>
         </div>
         <div>
             <label>
                 Текст статьи: <br>
-                <textarea name="article_text" rows="10">{{ request.form.get('article_text', '') }}</textarea>
+                <textarea name="article_text" rows="10" style="width: 500px;">{{ request.form.get('article_text', '') }}</textarea>
             </label>
         </div>
-        <button type="submit">Создать статью</button>
+        <div>
+            <label>
+                <input type="checkbox" name="is_public"> Сделать статью публичной
+            </label>
+            <p><small>Публичные статьи видны всем пользователям, даже неавторизованным</small></p>
+        </div>
+        <div>
+            <button type="submit">Создать статью</button>
+            <a href="/lab8/articles/" style="margin-left: 20px;">Отмена</a>
+        </div>
     </form>
-
-    <p><a href="/lab8/articles/">Вернуться к списку статей</a></p>
 {% endblock %}
