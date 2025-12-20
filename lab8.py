@@ -90,22 +90,43 @@ def register():
 
 @lab8.route('/lab8/articles/')
 def article_list():
-    # Если пользователь авторизован, показываем его статьи + публичные статьи других пользователей
-    if current_user.is_authenticated:
-        # Статьи текущего пользователя
-        user_articles = articles.query.filter_by(login_id=current_user.id).all()
-        # Публичные статьи других пользователей
-        public_articles = articles.query.filter(
-            articles.is_public == True,
-            articles.login_id != current_user.id
-        ).all()
-        # Объединяем
-        all_articles = user_articles + public_articles
-    else:
-        # Для неавторизованных пользователей показываем только публичные статьи
-        all_articles = articles.query.filter_by(is_public=True).all()
+    search_query = request.args.get('search', '').strip()
 
-    return render_template('lab8/articles.html', articles=all_articles)
+    # Строим базовый запрос
+    if current_user.is_authenticated:
+        # Можем видеть свои статьи + публичные статьи других
+        query = articles.query.filter(
+            db.or_(
+                articles.login_id == current_user.id,
+                articles.is_public == True
+            )
+        )
+    else:
+        # Только публичные статьи
+        query = articles.query.filter_by(is_public=True)
+
+    # Применяем поиск если есть запрос
+    if search_query:
+        search_pattern = f"%{search_query}%"
+        query = query.filter(
+            db.or_(
+                articles.title.ilike(search_pattern),
+                articles.article_text.ilike(search_pattern)
+            )
+        )
+
+    # Сортировка: сначала свои статьи, затем публичные, по ID (новые сверху)
+    if current_user.is_authenticated:
+        all_articles = query.order_by(
+            db.case((articles.login_id == current_user.id, 1), else_=0).desc(),
+            articles.id.desc()
+        ).all()
+    else:
+        all_articles = query.order_by(articles.id.desc()).all()
+
+    return render_template('lab8/articles.html',
+                          articles=all_articles,
+                          search_query=search_query)
 
 @lab8.route('/lab8/create/', methods=['GET', 'POST'])
 @login_required

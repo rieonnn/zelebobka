@@ -3,42 +3,126 @@
 {% block main %}
     <h1>{% if current_user.is_authenticated %}Мои и публичные статьи{% else %}Публичные статьи{% endif %}</h1>
 
+    <!-- Форма поиска -->
+    <form action="/lab8/articles/" method="get" style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="text"
+                   name="search"
+                   placeholder="Поиск по статьям..."
+                   value="{{ search_query }}"
+                   style="flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <button type="submit" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Найти
+            </button>
+            {% if search_query %}
+                <a href="/lab8/articles/" style="padding: 8px 16px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none;">
+                    Сбросить
+                </a>
+            {% endif %}
+        </div>
+        <div style="font-size: 0.9em; color: #666;">
+            Поиск по заголовку и тексту статьи (не зависит от регистра)
+        </div>
+    </form>
+
+    {% if search_query %}
+        <div style="margin-bottom: 15px; padding: 10px; background-color: #f0f8ff; border-left: 4px solid #2196F3;">
+            <strong>Поиск:</strong> "{{ search_query }}"
+            {% if articles %}
+                <span style="color: green;"> (найдено: {{ articles|length }})</span>
+            {% else %}
+                <span style="color: red;"> (не найдено)</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
     {% if current_user.is_authenticated %}
-        <p><a href="/lab8/create/">Создать новую статью</a></p>
+        <p><a href="/lab8/create/" style="color: #2196F3; text-decoration: none; font-weight: bold;">+ Создать новую статью</a></p>
     {% endif %}
 
     {% if articles %}
         {% for article in articles %}
-            <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
-                <h3>{{ article.title }}</h3>
+            <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                <h3 style="margin-top: 0;">
+                    {{ article.title }}
+                    {% if search_query and search_query|lower in article.title|lower %}
+                        <span style="background-color: yellow; padding: 0 4px;">(найдено в заголовке)</span>
+                    {% endif %}
+                </h3>
 
-                <!-- Показываем статус статьи -->
-                <div style="margin-bottom: 10px;">
+                <div style="margin-bottom: 10px; font-size: 0.9em; color: #666;">
                     {% if article.is_public %}
-                        <span style="color: green; font-weight: bold;">✓ Публичная</span>
+                        <span style="color: green;">Публичная статья</span>
                     {% else %}
-                        <span style="color: gray;">Приватная</span>
+                        <span style="color: gray;">Приватная статья</span>
                     {% endif %}
 
                     {% if article.login_id == current_user.id %}
                         <span style="color: blue; margin-left: 10px;">(Моя статья)</span>
+                    {% elif article.author %}
+                        <span style="margin-left: 10px;">Автор: {{ article.author.login }}</span>
                     {% endif %}
                 </div>
 
-                <p>{{ article.article_text[:200] }}{% if article.article_text|length > 200 %}...{% endif %}</p>
+                <div style="margin-bottom: 15px;">
+                    {% if search_query %}
+                        {% set text_lower = article.article_text|lower %}
+                        {% set query_lower = search_query|lower %}
+
+                        {% if query_lower in text_lower %}
+                            {% set pos = text_lower.find(query_lower) %}
+                            {% set start = max(0, pos - 50) %}
+                            {% set end = min(article.article_text|length, pos + search_query|length + 50) %}
+
+                            {% if start > 0 %}...{% endif %}
+                            {{ article.article_text[start:pos] }}
+                            <strong style="background-color: yellow;">{{ article.article_text[pos:pos+search_query|length] }}</strong>
+                            {{ article.article_text[pos+search_query|length:end] }}
+                            {% if end < article.article_text|length %}...{% endif %}
+                        {% else %}
+                            {{ article.article_text[:200] }}
+                            {% if article.article_text|length > 200 %}...{% endif %}
+                        {% endif %}
+                    {% else %}
+                        {{ article.article_text[:200] }}
+                        {% if article.article_text|length > 200 %}...{% endif %}
+                    {% endif %}
+                </div>
 
                 <!-- Кнопки управления показываем только для своих статей -->
                 {% if current_user.is_authenticated and article.login_id == current_user.id %}
-                    <p>
-                        <a href="/lab8/articles/{{ article.id }}/edit/">Редактировать</a>
+                    <div>
+                        <a href="/lab8/articles/{{ article.id }}/edit/" style="color: #2196F3; margin-right: 15px;">Редактировать</a>
                         <form action="/lab8/articles/{{ article.id }}/delete/" method="post" style="display: inline;">
-                            <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить эту статью?')">Удалить</button>
+                            <button type="submit"
+                                    onclick="return confirm('Вы уверены, что хотите удалить эту статью?')"
+                                    style="color: #f44336; background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline;">
+                                Удалить
+                            </button>
                         </form>
-                    </p>
+                    </div>
                 {% endif %}
             </div>
         {% endfor %}
     {% else %}
-        <p>{% if current_user.is_authenticated %}У вас пока нет статей, и нет публичных статей других пользователей.{% else %}Нет публичных статей.{% endif %}</p>
+        <div style="text-align: center; padding: 40px; color: #666;">
+            {% if search_query %}
+                <p>По запросу "{{ search_query }}" ничего не найдено.</p>
+                <p><a href="/lab8/articles/">Показать все статьи</a></p>
+            {% else %}
+                <p>
+                    {% if current_user.is_authenticated %}
+                        У вас пока нет статей, и нет публичных статей других пользователей.
+                    {% else %}
+                        Нет публичных статей.
+                    {% endif %}
+                </p>
+                {% if current_user.is_authenticated %}
+                    <p><a href="/lab8/create/">Создать статью</a></p>
+                {% else %}
+                    <p><a href="/lab8/login/">Войдите</a> или <a href="/lab8/register/">зарегистрируйтесь</a>, чтобы создавать статьи.</p>
+                {% endif %}
+            {% endif %}
+        </div>
     {% endif %}
 {% endblock %}
