@@ -16,11 +16,20 @@
         position: absolute;
         width: 80px;
         height: 80px;
-        background: url('/static/lab9/box_closed.png') center/contain no-repeat;
         cursor: pointer;
-        border: 2px solid gold;
         border-radius: 6px;
         transition: transform 0.2s;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .box.closed {
+        background-image: url('/static/lab9/box_closed.png');
+        border: 2px solid gold;
+    }
+    .box.requires-auth {
+        border: 3px solid #ff4444;
+        box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
     }
     .box:hover {
         transform: scale(1.1);
@@ -28,6 +37,8 @@
     .box.opened {
         opacity: 0.4;
         cursor: default;
+        background-image: url('/static/lab9/box_opened.png');
+        border: 2px solid #999;
     }
     .popup {
         position: absolute;
@@ -46,26 +57,86 @@
     }
     #info {
         background: #fdfdfd;
-        padding: 4px 12px;
+        padding: 12px 20px;
         border-radius: 16px;
         display: inline-block;
+        margin-right: 20px;
+    }
+    .auth-info {
+        color: #ff4444;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    #controls {
         margin-top: 10px;
+    }
+    #santa-btn {
+        padding: 30px 20px;
+        background: linear-gradient(45deg, #ff4444, #ff8800);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    #santa-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+    }
+    #santa-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
     }
 </style>
 <script>
     let currentPopup = null;
+    let isAuthenticated = false;
 
     async function updateStatus() {
         const res = await fetch('/lab9/status');
-        const { opened, remaining } = await res.json();
+        const { opened, remaining, is_authenticated } = await res.json();
+        isAuthenticated = is_authenticated;
+
+        // Обновляем кнопку Деда Мороза
+        const santaBtn = document.getElementById('santa-btn');
+        santaBtn.disabled = !isAuthenticated;
+        if (!isAuthenticated) {
+            santaBtn.title = "Требуется авторизация";
+        }
+
+        // Обновляем состояние коробок
         opened.forEach(id => {
             const el = document.querySelector(`.box[data-id="${id}"]`);
-            if (el) el.classList.add('opened');
+            if (el) {
+                el.classList.remove('closed');
+                el.classList.add('opened');
+            }
         });
+
+        // Обновляем счетчик
         document.getElementById('count').textContent = remaining;
+
+        // Обновляем информацию об авторизации
+        const authInfo = document.getElementById('auth-info');
+        if (isAuthenticated) {
+            authInfo.textContent = "Вы вошли как авторизованный пользователь (можно открыть 5 подарков)";
+            authInfo.style.color = "green";
+        } else {
+            authInfo.textContent = "Гость (можно открыть 3 подарка). Красные коробки требуют авторизации.";
+            authInfo.style.color = "#ff4444";
+        }
     }
 
-    async function openBox(id) {
+    async function openBox(id, requiresAuth) {
+        // Проверяем, требует ли коробка авторизации
+        if (requiresAuth && !isAuthenticated) {
+            alert("Эта коробка доступна только авторизованным пользователям!");
+            return;
+        }
+
         const box = document.querySelector(`.box[data-id="${id}"]`);
         if (!box || box.classList.contains('opened')) return;
 
@@ -81,6 +152,7 @@
             return;
         }
 
+        box.classList.remove('closed');
         box.classList.add('opened');
 
         // Удаляем старый popup
@@ -104,18 +176,59 @@
         updateStatus();
     }
 
+    async function resetBoxes() {
+        if (!isAuthenticated) {
+            alert("Требуется авторизация для использования этой функции!");
+            return;
+        }
+
+        const res = await fetch('/lab9/reset', {
+            method: 'POST'
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            alert(data.error || 'Ошибка сброса');
+            return;
+        }
+
+        const data = await res.json();
+        alert(data.message);
+
+        // Сбрасываем все коробки на клиенте
+        const boxes = document.querySelectorAll('.box');
+        boxes.forEach(box => {
+            box.classList.remove('opened');
+            box.classList.add('closed');
+        });
+
+        updateStatus();
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('container');
         const boxes = {{ boxes | tojson }};
+
         boxes.forEach(b => {
             const div = document.createElement('div');
-            div.className = 'box';
+            div.className = 'box closed';
+            if (b.requires_auth) {
+                div.classList.add('requires-auth');
+            }
             div.dataset.id = b.id;
+            div.dataset.auth = b.requires_auth;
             div.style.left = b.x + 'px';
             div.style.top = b.y + 'px';
-            div.onclick = () => openBox(b.id);
+            div.onclick = () => openBox(b.id, b.requires_auth);
+
+            // Добавляем подсказку для коробок, требующих авторизации
+            if (b.requires_auth) {
+                div.title = "Требуется авторизация";
+            }
+
             container.appendChild(div);
         });
+
         updateStatus();
     });
 </script>
@@ -123,6 +236,12 @@
 
 {% block main %}
 <h1>Новогодние подарки</h1>
+<div id="info">
+    Осталось: <span id="count">10</span> подарков
+    <div id="auth-info" class="auth-info"></div>
+</div>
 <div id="container"></div>
-<div id="info">Осталось: <span id="count">10</span> подарков</div>
+<div id="controls">
+    <button id="santa-btn" onclick="resetBoxes()">🎅 Дед Мороз (сбросить все)</button>
+</div>
 {% endblock %}
