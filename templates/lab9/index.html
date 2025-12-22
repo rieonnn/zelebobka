@@ -2,8 +2,127 @@
 
 {% block lab %}Лабораторная работа 9{% endblock %}
 
-{% block script %}{% endblock %}
+{% block script %}
+<style>
+    #container {
+        position: relative;
+        height: 650px;
+        background: #6c726f;
+        margin: 20px 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .box {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        background: url('/static/lab9/box_closed.png') center/contain no-repeat;
+        cursor: pointer;
+        border: 2px solid gold;
+        border-radius: 6px;
+        transition: transform 0.2s;
+    }
+    .box:hover {
+        transform: scale(1.1);
+    }
+    .box.opened {
+        opacity: 0.4;
+        cursor: default;
+    }
+    .popup {
+        position: absolute;
+        background: white;
+        color: rgb(7, 7, 7);
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 180px;
+        font-size: 14px;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .popup img {
+        width: 80px;
+        margin-top: 6px;
+    }
+    #info {
+        background: #fdfdfd;
+        padding: 4px 12px;
+        border-radius: 16px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+</style>
+<script>
+    let currentPopup = null;
+
+    async function updateStatus() {
+        const res = await fetch('/lab9/status');
+        const { opened, remaining } = await res.json();
+        opened.forEach(id => {
+            const el = document.querySelector(`.box[data-id="${id}"]`);
+            if (el) el.classList.add('opened');
+        });
+        document.getElementById('count').textContent = remaining;
+    }
+
+    async function openBox(id) {
+        const box = document.querySelector(`.box[data-id="${id}"]`);
+        if (!box || box.classList.contains('opened')) return;
+
+        const res = await fetch('/lab9/open', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || 'Ошибка');
+            return;
+        }
+
+        box.classList.add('opened');
+
+        // Удаляем старый popup
+        if (currentPopup) currentPopup.remove();
+
+        // Создаём новый
+        const popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.innerHTML = `<strong>🎁 Поздравление!</strong><br>${data.message}<br><img src="${data.image}">`;
+        popup.style.left = (parseInt(box.style.left) + 40) + 'px';
+        popup.style.top = (parseInt(box.style.top) - 100) + 'px';
+        document.getElementById('container').appendChild(popup);
+        currentPopup = popup;
+
+        // Автоудаление через 5 сек
+        setTimeout(() => {
+            if (popup.parentNode) popup.remove();
+            currentPopup = null;
+        }, 5000);
+
+        updateStatus();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('container');
+        const boxes = {{ boxes | tojson }};
+        boxes.forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'box';
+            div.dataset.id = b.id;
+            div.style.left = b.x + 'px';
+            div.style.top = b.y + 'px';
+            div.onclick = () => openBox(b.id);
+            container.appendChild(div);
+        });
+        updateStatus();
+    });
+</script>
+{% endblock %}
 
 {% block main %}
-    <h1>Поздравления</h1>
+<h1>Новогодние подарки</h1>
+<div id="container"></div>
+<div id="info">Осталось: <span id="count">10</span> подарков</div>
 {% endblock %}
